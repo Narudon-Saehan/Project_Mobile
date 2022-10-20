@@ -1,13 +1,15 @@
 import { useState } from "react"
-import { View, Text, TouchableOpacity ,Alert} from "react-native"
+import { View, Text, TouchableOpacity, Alert,Image } from "react-native"
+import * as ImagePicker from 'expo-image-picker';
 import * as AuthModel from "../../firebase/authModel"
 import * as UserModel from "../../firebase/userModel"
-import { TextBox } from "../../component/forms"
+import * as StorageModel from "../../firebase/storageModel"
+import { TextBox, CreateButton } from "../../component/forms"
 import { myColor } from "../../component/myColor"
 import { Loading } from "../Loading"
 export const Register = ({ navigation }) => {
-    const [profile, setProfile] = useState({ email: "", password: "", fristName: "", lastName: "" })
-    const [loading,setLoading] = useState(false)
+    const [profile, setProfile] = useState({ email: "", password: "", fristName: "", lastName: "", photo: { uri: "https://i.ibb.co/y4n8n20/user.jpg" } })
+    const [loading, setLoading] = useState(false)
     const changeProfile = (keyName, value) => {
         setProfile({ ...profile, [keyName]: value })
     }
@@ -16,35 +18,58 @@ export const Register = ({ navigation }) => {
             name: 'Login',
         })
     }
-    const unsuccess=(msg)=>{
+    const openImagePickerAsync = async () => {
+        let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            alert("Permission to access camera roll is required!");
+            return;
+        }
+        let pickerResult = await ImagePicker.launchImageLibraryAsync();
+        if (pickerResult.cancelled === true) {
+            return;
+        }
+        console.log(permissionResult);
+        changeProfile("photo", { uri: pickerResult.uri });
+        StorageModel.uploadImage(pickerResult.uri)
+    }
+    const unsuccess = (msg) => {
         console.log(msg);
         Alert.alert(msg)
         setLoading(false)
     }
-    const allsuccess=(msg)=>{
+    const allsuccess = (msg) => {
         console.log(msg);
         Alert.alert("Register Success")
         setLoading(false)
         toLogin()
     }
-    const createUserSuccess=(user)=>{
+    const createUserSuccess = (user) => {
         console.log(user);
-        UserModel.addUser(user.email,profile,allsuccess,unsuccess)
+        UserModel.addUser(user.email, profile, allsuccess, unsuccess)
 
     }
-    const onRegister=()=>{
+    const onRegister = () => {
         setLoading(true)
         console.log(profile);
-        AuthModel.signUpEmailPass(profile.email,profile.password,createUserSuccess,unsuccess)
+        AuthModel.signUpEmailPass(profile.email, profile.password, createUserSuccess, unsuccess)
     }
-    if(loading){
-        return(
-            <Loading/>
+    if (loading) {
+        return (
+            <Loading />
         )
     }
     return (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
             <Text style={{ fontSize: 30 }}>Register</Text>
+            <Image 
+                style={{width: 150,height: 150,resizeMode: 'cover',borderRadius: 150,}}
+                source={profile.photo}
+            ></Image>
+            <CreateButton
+                text="upload"
+                color={myColor.secondary}
+                funOnPress={() => openImagePickerAsync()}
+            />
 
             <TextBox
                 text={"Email"}
@@ -77,10 +102,10 @@ export const Register = ({ navigation }) => {
             <View style={{ flexDirection: "row" }}>
                 <TouchableOpacity
                     style={{
-                        backgroundColor:myColor.success,
+                        backgroundColor: myColor.success,
                         borderRadius: 10,
                         padding: 10,
-                        marginRight:10,
+                        marginRight: 10,
                     }}
                     onPress={() => onRegister()}
                 >
@@ -89,7 +114,7 @@ export const Register = ({ navigation }) => {
 
                 <TouchableOpacity
                     style={{
-                        backgroundColor:myColor.error,
+                        backgroundColor: myColor.error,
                         borderRadius: 10,
                         padding: 10,
                     }}

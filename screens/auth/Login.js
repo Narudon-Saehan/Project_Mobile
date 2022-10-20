@@ -1,6 +1,9 @@
-import { View, Text, TextInput, Button } from "react-native"
+import { View, Text, Button,Alert, TouchableOpacity } from "react-native"
 import { useFonts } from "expo-font"
 import { useState } from "react";
+import { TextBox } from "../../component/forms";
+import * as AuthModel from "../../firebase/authModel"
+import { myColor } from "../../component/myColor";
 
 export const Login = ({ navigation }) => {
     const [fontsLoaded] = useFonts({
@@ -8,11 +11,32 @@ export const Login = ({ navigation }) => {
         'cursive': require('../../assets/fonts/Cursive-standard.ttf'),
         'fuzzyBubbles': require('../../assets/fonts/FuzzyBubbles-Bold.ttf'),
     });
+    const [email,setEmail] = useState("")
+    const [password,setPassword] = useState("")
 
     const toRegister = () => {
         navigation.navigate({
             name: 'Register',
         })
+    }
+    const toForgotPassword = () => {
+        navigation.navigate({
+            name: 'ForgotPassword',
+        })
+    }
+    const unsuccess=(msg)=>{
+        console.log(msg);
+        Alert.alert(msg)
+    }
+    const success=(msg)=>{
+        console.log(msg);
+        Alert.alert(msg)
+        navigation.navigate({
+            name: 'MainNav',
+        })
+    }
+    const onLogin=()=>{
+        AuthModel.signInEmailPass(email,password,success,unsuccess)
     }
     if (!fontsLoaded) {
         return (
@@ -22,20 +46,64 @@ export const Login = ({ navigation }) => {
         )
     }
     return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" ,backgroundColor:myColor.primary}}>
             <View>
-                <Text style={{ fontFamily: "mali", fontSize: 50, width: "100%", justifyContent: "center" }}>MY APP</Text>
+                <Text style={{ fontFamily: "mali", fontSize: 50, width: "100%", justifyContent: "center",color:myColor.accent }}>MY APP</Text>
             </View>
-            <View style={{ width: "80%", marginBottom: 20 }}>
-                <Text style={{ alignSelf: "flex-start" }}>Email</Text>
-                <TextInput style={{ borderWidth: 1, borderRadius: 10, width: "100%" }} />
-            </View>
-            <View style={{ width: "80%", marginBottom: 20 }}>
-                <Text style={{ alignSelf: "flex-start" }}>Password</Text>
-                <TextInput style={{ borderWidth: 1, borderRadius: 10, width: "100%" }} />
-            </View>
-            <Button title="Login" />
-            <Button title="Register" onPress={() => toRegister()} />
+            <TextBox
+                text="Email"
+                setTextInput={{
+                    value: email,
+                    onChangeText: (text) => setEmail(text),
+                }}
+            />
+            <TextBox
+                text="Password"
+                setTextInput={{
+                    value: password,
+                    onChangeText: (text) => setPassword(text),
+                }}
+            />
+            <TouchableOpacity
+                style={{
+                    width:"80%",
+                    justifyContent:"flex-end",
+                    alignItems:"flex-end",
+                    marginBottom:10,
+                    color:myColor.error,
+                }}
+                onPress={()=>toForgotPassword()}
+            >
+                <Text>Forgot Password</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={{
+                    backgroundColor:myColor.accent,
+                    borderRadius:10,
+                    padding:10,
+                    width:"80%",
+                    justifyContent:"center",
+                    alignItems:"center",
+                    marginBottom:10,
+                }}
+                onPress={()=>onLogin()}
+            >
+                <Text>LOGIN</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={{
+                    backgroundColor:myColor.accent,
+                    borderRadius:10,
+                    padding:10,
+                    width:"80%",
+                    justifyContent:"center",
+                    alignItems:"center"
+                }}
+                onPress={() => toRegister()}
+            >
+                <Text>REGISTER</Text>
+            </TouchableOpacity>
         </View>
     )
 }

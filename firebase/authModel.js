@@ -14,3 +14,25 @@ export const signUpEmailPass = (email, password, success, unsuccess) => {
             unsuccess(err.code +" " + err.message)
         })
 }
+
+export const signInEmailPass = (email, password, success, unsuccess) => {
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential)=>{
+            let user = userCredential.user
+            success(user.email)
+        }).catch((err)=>{
+            console.log('signInEmailPass error');
+            unsuccess(err.code + ' ' + err.message)
+        })
+}
+
+export const recoverPassword=(email,success,unsuccess)=>{
+    auth.sendPasswordResetEmail(email)
+        .then(()=>{
+            success(`We sent an email to (${email})`)
+        })
+        .catch((err)=>{
+            console.log("signUpEmailPass error");
+            unsuccess(err.code+" "+err.message)
+        })
+}
