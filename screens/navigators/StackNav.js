@@ -9,9 +9,11 @@ import { Search } from '../user/Search'
 import { Subscription } from '../user/Subscription'
 import { CreatePost } from '../user/CreatePost'
 import { ForgotPassword } from '../auth/ForgotPassword'
+import { EditProfile } from '../user/EditProfile'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
+
 
 const MainNav=()=>{
     return(
@@ -37,6 +39,7 @@ export const StackNav = () => {
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+            <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="MainNav" component={MainNav} />
         </Stack.Navigator>
     )

@@ -2,7 +2,7 @@ import firebaseApp from "./connect";
 import "firebase/storage";
 const storage = firebaseApp.storage("gs://project-mobile-ea735.appspot.com/");
 
-export const uploadImage = async (imgUri)=>{
+export const uploadImage = async (imgUri,email,success,unsuccess)=>{
     console.log(imgUri);
     const resposns = await fetch(imgUri)
     const blob = await resposns.blob();
@@ -10,9 +10,21 @@ export const uploadImage = async (imgUri)=>{
     const metadata = {
         contentType: 'image/jpeg',
     };
-    await storage.ref().child("image/"+"filename5.jpeg").put(blob, metadata)
-    .then((data)=>{
-        console.log(data);
+    await storage.ref().child("image/"+`${email}.jpeg`).put(blob, metadata)
+    .then(()=>{
+        storage.ref().child("image/"+`${email}.jpeg`).getDownloadURL()
+        .then((url) => {
+            success(email,url)
+        })
+        .catch((error) => {
+            unsuccess(error)
+        });
     })
+    .catch((err)=>{
+        unsuccess(err)
+    }) 
+
+
+
 }
 

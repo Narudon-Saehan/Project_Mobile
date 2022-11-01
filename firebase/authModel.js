@@ -25,6 +25,20 @@ export const signInEmailPass = (email, password, success, unsuccess) => {
             unsuccess(err.code + ' ' + err.message)
         })
 }
+export const signOut = (success,unsuccess)=>{
+    auth.signOut()
+        .then(()=>{
+            success()
+        })
+        .catch((err)=>{
+            console.log('signOut error');
+            unsuccess(err.code + ' ' + err.message)
+        })
+}
+
+export const getCurrentUser = ()=>{
+    return auth.currentUser
+}
 
 export const recoverPassword=(email,success,unsuccess)=>{
     auth.sendPasswordResetEmail(email)

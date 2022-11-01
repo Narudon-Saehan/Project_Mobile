@@ -8,7 +8,7 @@ import { TextBox, CreateButton } from "../../component/forms"
 import { myColor } from "../../component/myColor"
 import { Loading } from "../Loading"
 export const Register = ({ navigation }) => {
-    const [profile, setProfile] = useState({ email: "", password: "", fristName: "", lastName: "", photo: { uri: "https://i.ibb.co/y4n8n20/user.jpg" } })
+    const [profile, setProfile] = useState({ email: "", password: "", fristName: "", lastName: "", profileImg:"https://i.ibb.co/y4n8n20/user.jpg" })
     const [loading, setLoading] = useState(false)
     const changeProfile = (keyName, value) => {
         setProfile({ ...profile, [keyName]: value })
@@ -28,9 +28,7 @@ export const Register = ({ navigation }) => {
         if (pickerResult.cancelled === true) {
             return;
         }
-        console.log(permissionResult);
-        changeProfile("photo", { uri: pickerResult.uri });
-        StorageModel.uploadImage(pickerResult.uri)
+        changeProfile("profileImg", pickerResult.uri );
     }
     const unsuccess = (msg) => {
         console.log(msg);
@@ -43,11 +41,18 @@ export const Register = ({ navigation }) => {
         setLoading(false)
         toLogin()
     }
+
+    const uploadPhotoSuccess = (email,profileImg) => {
+        UserModel.addUser(email, profile,profileImg, allsuccess, unsuccess)
+    }
+
     const createUserSuccess = (user) => {
         console.log(user);
-        UserModel.addUser(user.email, profile, allsuccess, unsuccess)
-
+        //StorageModel.uploadImage(pickerResult.uri)
+        //UserModel.addUser(user.email, profile, allsuccess, unsuccess)
+        StorageModel.uploadImage(profile.profileImg,user.email,uploadPhotoSuccess,unsuccess)
     }
+
     const onRegister = () => {
         setLoading(true)
         console.log(profile);
@@ -63,7 +68,7 @@ export const Register = ({ navigation }) => {
             <Text style={{ fontSize: 30 }}>Register</Text>
             <Image 
                 style={{width: 150,height: 150,resizeMode: 'cover',borderRadius: 150,}}
-                source={profile.photo}
+                source={{uri:profile.profileImg}}
             ></Image>
             <CreateButton
                 text="upload"
