@@ -29,9 +29,17 @@ export const EditProfile=({navigation})=>{
 
     const unsuccess=(msg)=>{
         console.log(msg);
+        setLoading(false)
     }
     const editSuccess=()=>{
-        Alert.alert("Edit Success");
+        Alert.alert("Edit Profile",
+        "Edit Success",
+        [
+            { text: "OK", onPress: () =>  navigation.navigate({
+                name: 'Profile',
+            })}
+        ]);
+        setLoading(false)
     }
     const getUserSuccess =(doc)=>{
         setdocID(doc.id)
@@ -42,6 +50,7 @@ export const EditProfile=({navigation})=>{
         UserModel.updateUserById(docID,profile,editSuccess,unsuccess)
     }
     const onEditProfile=()=>{
+        setLoading(true)
         console.log(docID);
         console.log(profile);
         //UserModel.updateUserById(docID,profile,editSuccess,unsuccess)

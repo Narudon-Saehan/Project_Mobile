@@ -8,7 +8,7 @@ import { TextBox, CreateButton } from "../../component/forms"
 import { myColor } from "../../component/myColor"
 import { Loading } from "../Loading"
 export const Register = ({ navigation }) => {
-    const [profile, setProfile] = useState({ email: "", password: "", fristName: "", lastName: "", profileImg:"https://i.ibb.co/y4n8n20/user.jpg" })
+    const [profile, setProfile] = useState({ email: "", password: "",confirmPassword:"", fristName: "", lastName: "", profileImg:"https://firebasestorage.googleapis.com/v0/b/project-mobile-ea735.appspot.com/o/profile_image%2Fuser.jpg?alt=media&token=f28170a0-1d7f-42aa-8c49-7207ab17feb7" })
     const [loading, setLoading] = useState(false)
     const changeProfile = (keyName, value) => {
         setProfile({ ...profile, [keyName]: value })
@@ -88,6 +88,13 @@ export const Register = ({ navigation }) => {
                 setTextInput={{
                     value: profile.password,
                     onChangeText: (text) => changeProfile("password", text)
+                }}
+            />
+            <TextBox
+                text={"Confirm Password"}
+                setTextInput={{
+                    value: profile.confirmPassword,
+                    onChangeText: (text) => changeProfile("confirmPassword", text)
                 }}
             />
             <TextBox

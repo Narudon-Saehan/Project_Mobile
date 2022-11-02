@@ -21,6 +21,18 @@ export const addUser=(email,profile,profileImg,success,unsuccess)=>{
     });
 }
 export const getUserByEamil =(email,success,unsuccess)=>{
+    userColl.where("email","==",email)
+    .onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            console.log(doc.id,"=>",doc.data())
+            success(doc)
+        });
+    }),(error)=>{
+        console.log(error);
+    };
+}
+
+export const getUserByEamil2 =(email,success,unsuccess)=>{
     userColl.where("email","==",email).get()
     .then((snapshot)=>{
         snapshot.forEach((doc)=>{
