@@ -10,6 +10,10 @@ import { Subscription } from '../user/Subscription'
 import { CreatePost } from '../user/CreatePost'
 import { ForgotPassword } from '../auth/ForgotPassword'
 import { EditProfile } from '../user/EditProfile'
+import {myColor} from '../../component/myColor'
+import { MaterialCommunityIcons,MaterialIcons,FontAwesome,Ionicons } from '@expo/vector-icons';
+
+import { Loading } from '../Loading'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -19,12 +23,32 @@ const MainNav=()=>{
     return(
         <Tab.Navigator
             initialRouteName='Home'
+            screenOptions={({route})=>({
+                tabBarIcon:({focused})=>{
+                    if (route.name === "CreatePost"){
+                        return <Ionicons name="add-circle" size={24} color={focused?myColor.primary:"black"} />
+                    }else if(route.name === "Search"){
+                        return <FontAwesome name="search" size={24} color={focused?myColor.primary:"black"} />
+                    }else if(route.name === "Home"){
+                        return <FontAwesome name="home" size={24} color={focused?myColor.primary:"black"} />
+                    }else if(route.name === "Subscription"){
+                        return <MaterialIcons name="subscriptions" size={24} color={focused?myColor.primary:"black"} />
+                    }else if(route.name === "Profile"){
+                        return <MaterialCommunityIcons name="face-man-profile" size={24} color={focused?myColor.primary:"black"} />
+                    }else if(route.name === "Loading"){
+                        return <MaterialCommunityIcons name="loading" size={24} color={focused?myColor.primary:"black"} />
+                    }
+                },
+                tabBarActiveTintColor:myColor.primary,
+
+            })}
         >
             <Tab.Screen name="CreatePost" component={CreatePost}/>
             <Tab.Screen name="Search" component={Search}/>
             <Tab.Screen name="Home" component={Home}/>
             <Tab.Screen name="Subscription" component={Subscription}/>
             <Tab.Screen name="Profile" component={Profile}/>
+            <Tab.Screen name="Loading" component={Loading}/>
         </Tab.Navigator>
     )
 }

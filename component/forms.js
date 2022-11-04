@@ -3,7 +3,7 @@ import { View, Text, TextInput,TouchableOpacity } from "react-native"
 
 export const TextBox = (props) => {
     return (
-        <View style={{ width: "80%", margin: 10 }}>
+        <View style={{ width: "100%"}}>
             <Text style={{ alignSelf: "flex-start" }}>{props.text}</Text>
             <TextInput
                 style={{ borderWidth: 1, borderRadius: 10, width: "100%" }}
@@ -26,8 +26,13 @@ export const CreateButton = (props) => {
                     ...props.styles,
                 }}
                 onPress={props.funOnPress}
+                {...props.setButton}
             >
-                <Text>{props.text}</Text>
+                <Text
+                    style={{
+                        ...props.textStyles
+                    }}
+                >{props.text}</Text>
             </TouchableOpacity>
     )
 }

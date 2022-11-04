@@ -1,9 +1,13 @@
-import { View, Text, Button,Alert, TouchableOpacity } from "react-native"
+import { View, Text, Button,Alert, TouchableOpacity,KeyboardAvoidingView,ScrollView,TouchableWithoutFeedback,Keyboard,
+   } from "react-native"
 import { useFonts } from "expo-font"
 import { useState } from "react";
 import { TextBox } from "../../component/forms";
 import * as AuthModel from "../../firebase/authModel"
 import { myColor } from "../../component/myColor";
+import KeyboardAvoidingWrapper from "../../component/KeyboardAvoidingWrapper";
+import { SafeAreaView } from 'react-native-safe-area-context'
+
 
 export const Login = ({ navigation }) => {
     const [fontsLoaded] = useFonts({
@@ -46,7 +50,9 @@ export const Login = ({ navigation }) => {
         )
     }
     return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" ,backgroundColor:myColor.primary}}>
+        <SafeAreaView style={{ flex: 1,height:"100%", justifyContent: "center", alignItems: "center" ,backgroundColor:myColor.primary}}>
+            {/* <ScrollView style={{flex:1,borderWidth:5,width:"100%",height:"100%"}}>
+            <View style={{flex:1,justifyContent: "center", alignItems: "center"}}> */}
             <View>
                 <Text style={{ fontFamily: "mali", fontSize: 50, width: "100%", justifyContent: "center",color:myColor.accent }}>MY APP</Text>
             </View>
@@ -104,6 +110,8 @@ export const Login = ({ navigation }) => {
             >
                 <Text>REGISTER</Text>
             </TouchableOpacity>
-        </View>
+            {/* </View>
+            </ScrollView> */}
+        </SafeAreaView>
     )
 }

@@ -7,6 +7,8 @@ import * as UserModel from "../../firebase/userModel"
 import * as ImagePicker from 'expo-image-picker';
 import * as StorageModel from "../../firebase/storageModel"
 
+import { Loading } from "../Loading"
+
 export const EditProfile=({navigation})=>{
     const [docID,setdocID] =useState()
     const [profile,setProfile] =useState()
@@ -51,8 +53,8 @@ export const EditProfile=({navigation})=>{
     }
     const onEditProfile=()=>{
         setLoading(true)
-        console.log(docID);
-        console.log(profile);
+        // console.log(docID);
+        // console.log(profile);
         //UserModel.updateUserById(docID,profile,editSuccess,unsuccess)
         StorageModel.uploadImage(profile.profileImg,profile.email,uploadPhotoSuccess,unsuccess)
     }
@@ -63,13 +65,11 @@ export const EditProfile=({navigation})=>{
 
     if(loading){
         return(
-            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-                <Text>Loading....</Text>
-            </View>
+            <Loading/>
         )
     }
     return(
-        <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+        <View style={{flex:1,justifyContent:"center",alignItems:"center",backgroundColor:myColor.primary}}>
             <Text>EditProfile</Text>
             <Image 
                 style={{width: 150,height: 150,resizeMode: 'cover',borderRadius: 150,}}
