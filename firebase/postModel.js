@@ -28,6 +28,41 @@ export const addPost= (dataPost,success,unsuccess)=>{
     });
 }
 
+export const updateImagesPost= (images,docIdPost,success,unsuccess)=>{
+    console.log("updateImagesPost",images);
+    // console.log(docIdPost);
+    postColl.doc(docIdPost).update({
+        updateDate:new Date(),
+        images
+    }).then(()=>{
+        success("OK");
+    }).catch((err)=>{
+        unsuccess(err);
+        console.error("error");
+    })
+    // const setDataPost={
+    //     updateDate:new Date(),
+    //     title:dataPost.title,
+    //     selectId:dataPost.selectId,
+    //     images:[],
+    //     description:dataPost.description,
+    //     link:dataPost.link,
+    //     creator: DB.doc("users/"+dataPost.id),
+    //     like:0,
+    // }
+    // postColl.add({
+    //     ...setDataPost
+    // })
+    // .then((docRef) => {
+    //     console.log("Document written with ID: ", docRef.id);
+    //     success(docRef.id)
+    // })
+    // .catch((error) => {
+    //     console.error("Error adding document: ", error);
+    //     unsuccess(error)
+    // });
+}
+
 export const getAllPost =(success,unsuccess)=>{
     postColl.orderBy("updateDate", "desc").onSnapshot( async (querySnapshot) => {
         let posts = []

@@ -1,4 +1,4 @@
-import { View, Text, Button,Alert, TouchableOpacity,KeyboardAvoidingView,ScrollView,TouchableWithoutFeedback,Keyboard,
+import { View, Text, Button,Alert, TouchableOpacity,KeyboardAvoidingView,ScrollView,TouchableWithoutFeedback,Keyboard,Image
    } from "react-native"
 import { useFonts } from "expo-font"
 import { useState } from "react";
@@ -32,12 +32,14 @@ export const Login = ({ navigation }) => {
         })
     }
     const unsuccess=(msg)=>{
-        console.log(msg);
+        //console.log(msg);
+        setLoading(false)
         AlertMessage(msg)
     }
     const success=(msg)=>{
-        console.log(msg);
-        AlertMessage(msg)
+        //console.log(msg);
+        //AlertMessage(msg)
+        setLoading(false)
         navigation.navigate({
             name: 'MainNav',
         })
@@ -69,6 +71,8 @@ export const Login = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1,height:"100%", justifyContent: "center", alignItems: "center" ,backgroundColor:myColor.primary}}>
             {/* <ScrollView style={{flex:1,borderWidth:5,width:"100%",height:"100%"}}>
             <View style={{flex:1,justifyContent: "center", alignItems: "center"}}> */}
+            <Image style={{width: 150,height: 150,resizeMode: 'cover',}} 
+                source={{uri:'https://firebasestorage.googleapis.com/v0/b/project-mobile-ea735.appspot.com/o/profile_image%2FBooks-illustration-on-transparent-background-PNG.png?alt=media&token=f9061344-6bbc-4459-8ca2-19ff0a1767c5'}}/>
             <View style={{flex:1}}>
                 <Text style={{ fontFamily: "mali", fontSize: 50, width: "100%", justifyContent: "center",color:myColor.accent }}>MY APP</Text>
             </View>

@@ -13,6 +13,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import * as AuthModel from "../../firebase/authModel"
 import * as UserModel from "../../firebase/userModel" 
 import * as PostModel from "../../firebase/postModel"
+import * as StorageModel from "../../firebase/storageModel"
 
 import { Loading } from "../Loading"
 
@@ -33,21 +34,27 @@ export const CreatePost = () => {
     const openImagePickerAsync = async () => {
         let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permissionResult.granted === false) {
-            alert("Permission to access camera roll is required!");
+            Alert.alert("Permission to access camera roll is required!");
             return;
         }
-        let pickerResult = await ImagePicker.launchImageLibraryAsync({allowsMultipleSelection:true});
-        if (pickerResult.cancelled === true) {
+        try{
+            let pickerResult = await ImagePicker.launchImageLibraryAsync({allowsMultipleSelection:true});
+            if (pickerResult.cancelled === true) {
+                return;
+            }
+            if(pickerResult.selected){
+                console.log("multi");
+                console.log(pickerResult)
+            }else{
+                console.log("one");
+            }
+            //console.log(pickerResult);
+            return pickerResult.uri
+        }
+        catch{
+            Alert.alert("NOT UP")
             return;
         }
-        if(pickerResult.selected){
-            console.log("multi");
-            console.log(pickerResult)
-        }else{
-            console.log("one");
-        }
-        //console.log(pickerResult);
-        return pickerResult.uri
         //setImgs({data:[...imgs.data,{id:imgs.data.length,url:pickerResult.uri}]})
     }
     const openDocumentPickerAsync = async () => {
@@ -61,14 +68,14 @@ export const CreatePost = () => {
     const addImg = async () => {
         let imgUri = await openImagePickerAsync()
         if (imgUri) {
-            setImgs({ data: [...imgs.data, { id: imgs.data.length, url: imgUri }] })
+            setImgs({ data: [...imgs.data, { url: imgUri }] })
         }
     }
     const editImg = async (index) => {
         let imgUri = await openImagePickerAsync()
         if (imgUri) {
             let newImgs = imgs.data
-            newImgs[index] = { id: index, url: imgUri }
+            newImgs[index] = { url: imgUri }
             setImgs({ data: newImgs })
         }
     }
@@ -120,8 +127,21 @@ export const CreatePost = () => {
         console.log(msg);
         setLoading(false)
     }
+    const success=(msg)=>{
+        console.log(msg);
+        Alert.alert("success")
+        setLoading(false)
+    }
+    const addImagesSuccess=(images,docIdPost)=>{
+        //console.log(images);
+        // console.log(docIdPost);
+        PostModel.updateImagesPost(images,docIdPost,success,unsuccess)
+        //setLoading(false)
+    }
     const addPostSuccess =(doc)=>{
-        console.log(doc);
+        //console.log(doc);
+        StorageModel.uploadPostImage(imgs.data,doc,addImagesSuccess,unsuccess)
+        //console.log(doc);
     }
     const getUserSuccess =(doc)=>{
         setProfile({...doc.data(),id:doc.id})
@@ -129,6 +149,7 @@ export const CreatePost = () => {
     }
     const onSubmitPost=()=>{
         if(post.title){
+            setLoading(true)
             PostModel.addPost({...post,id:profile.id},addPostSuccess,unsuccess)
         }
         else{
@@ -158,7 +179,13 @@ export const CreatePost = () => {
             </Modal>
             <ScrollView style={{flex:1}}>
                 <Text style={{...myFont.h2}}>Sample Post</Text>
-                <Card img={imgs.data.length===0?"":imgs.data[0].url}  title={post.header}  creator={profile.fristName + " " + profile.lastName}   like={0} />
+                <Card 
+                    img={imgs.data.length===0?"":imgs.data[0].url}  
+                    title={post.title}  
+                    creator={profile.fristName + " " + profile.lastName}   
+                    imgCreator={profile.profileImg}
+                    like={0} 
+                />
                 <Text>Image</Text>
                 <CreateButton
                     text="upload"

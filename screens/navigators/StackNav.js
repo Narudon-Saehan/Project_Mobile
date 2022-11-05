@@ -12,14 +12,15 @@ import { ForgotPassword } from '../auth/ForgotPassword'
 import { EditProfile } from '../user/EditProfile'
 import {myColor} from '../../component/myColor'
 import { MaterialCommunityIcons,MaterialIcons,FontAwesome,Ionicons } from '@expo/vector-icons';
-
+import * as Haptics from 'expo-haptics';
+import { Alert,TouchableOpacity } from 'react-native'
 import { Loading } from '../Loading'
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
 
 
-const MainNav=()=>{
+const MainNav=({navigation})=>{
     return(
         <Tab.Navigator
             initialRouteName='Home'
@@ -42,13 +43,65 @@ const MainNav=()=>{
                 tabBarActiveTintColor:myColor.primary,
 
             })}
+            tabb
         >
-            <Tab.Screen name="CreatePost" component={CreatePost}/>
-            <Tab.Screen name="Search" component={Search}/>
-            <Tab.Screen name="Home" component={Home}/>
-            <Tab.Screen name="Subscription" component={Subscription}/>
-            <Tab.Screen name="Profile" component={Profile}/>
-            <Tab.Screen name="Loading" component={Loading}/>
+            <Tab.Screen name="CreatePost" component={CreatePost}
+                listeners={{
+                    tabPress: e => {
+                        // e.preventDefault();
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                        navigation.navigate('CreatePost');
+                        
+                    },
+                }}
+            />
+            <Tab.Screen name="Search" component={Search}
+                listeners={{
+                    tabPress: e => {
+                        e.preventDefault();
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                        navigation.navigate('Search');
+                        
+                    },
+                }}
+            />
+            <Tab.Screen name="Home" component={Home}
+            listeners={{
+                    tabPress: e => {
+                        e.preventDefault();
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                        navigation.navigate('Home');
+                        
+                    },
+                }}
+            />
+            <Tab.Screen name="Subscription" component={Subscription}
+                listeners={{
+                    tabPress: e => {
+                        e.preventDefault();
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                        navigation.navigate('Subscription');
+                    },
+                }}
+            />
+            <Tab.Screen name="Profile" component={Profile}
+                listeners={{
+                    tabPress: e => {
+                        e.preventDefault();
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                        navigation.navigate('Profile');
+                    },
+                }}
+            />
+            <Tab.Screen name="Loading" component={Loading}
+                listeners={{
+                    tabPress: e => {
+                        e.preventDefault();
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+                        navigation.navigate('Loading');
+                    },
+                }}
+            />
         </Tab.Navigator>
     )
 }

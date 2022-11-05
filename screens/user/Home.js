@@ -49,7 +49,14 @@ export const Home = () => {
     ]
     const renderItem = ({ item, index }) => {
         return (
-            <Card key={index} img={item.images.length===0?"":item.images[0]}  title={item.title}  creator={item.creator.fristName + " " +item.creator.lastName}  like={item.like} />
+            <Card 
+                key={index} 
+                img={item.images.length===0?"":item.images[0]}  
+                title={item.title}  
+                creator={item.creator.fristName + " " +item.creator.lastName}
+                imgCreator={item.creator.profileImg } 
+                like={item.like} 
+            />
             // <View key={index} style={{ width: "100%", marginBottom: 10 ,marginTop:(index===0)?10:0}}>
             //     <View style={{ marginLeft: 20, marginRight: 20, backgroundColor: myColor.neutral, borderRadius: 20 }}>
             //         <Image

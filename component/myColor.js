@@ -5,6 +5,7 @@ export const myColor={
     neutral:"#FFFFFF",
     neutral2:"#000000",
     neutral3:"#CFCFCF",
+    neutral4:"#F4F4F4",
     success:"#00798C",
     error:"#D1495B",
 }
