@@ -5,8 +5,9 @@ import { useState } from "react";
 import { TextBox } from "../../component/forms";
 import * as AuthModel from "../../firebase/authModel"
 import { myColor } from "../../component/myColor";
-import KeyboardAvoidingWrapper from "../../component/KeyboardAvoidingWrapper";
+import KeyboardLockView from "../../component/KeyboardLockView.js";
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { AlertMessage } from "../../component/alertMessage";
 
 
 export const Login = ({ navigation }) => {
@@ -30,11 +31,11 @@ export const Login = ({ navigation }) => {
     }
     const unsuccess=(msg)=>{
         console.log(msg);
-        Alert.alert(msg)
+        AlertMessage(msg)
     }
     const success=(msg)=>{
         console.log(msg);
-        Alert.alert(msg)
+        AlertMessage(msg)
         navigation.navigate({
             name: 'MainNav',
         })

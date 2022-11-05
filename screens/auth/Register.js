@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { View, Text, TouchableOpacity, Alert,Image } from "react-native"
+import { View, Text, TouchableOpacity, Alert,Image,ScrollView } from "react-native"
 import * as ImagePicker from 'expo-image-picker';
 import * as AuthModel from "../../firebase/authModel"
 import * as UserModel from "../../firebase/userModel"
@@ -7,6 +7,8 @@ import * as StorageModel from "../../firebase/storageModel"
 import { TextBox, CreateButton } from "../../component/forms"
 import { myColor } from "../../component/myColor"
 import { Loading } from "../Loading"
+import KeyboardLockView from "../../component/KeyboardLockView.js";
+import { AlertMessage } from "../../component/alertMessage";
 export const Register = ({ navigation }) => {
     const [profile, setProfile] = useState({ email: "", password: "",confirmPassword:"", fristName: "", lastName: "", profileImg:"https://firebasestorage.googleapis.com/v0/b/project-mobile-ea735.appspot.com/o/profile_image%2Fuser.jpg?alt=media&token=f28170a0-1d7f-42aa-8c49-7207ab17feb7" })
     const [loading, setLoading] = useState(false)
@@ -32,12 +34,12 @@ export const Register = ({ navigation }) => {
     }
     const unsuccess = (msg) => {
         console.log(msg);
-        Alert.alert(msg)
+        AlertMessage(msg)
         setLoading(false)
     }
     const allsuccess = (msg) => {
         console.log(msg);
-        Alert.alert("Register Success")
+        AlertMessage("Register Success")
         setLoading(false)
         toLogin()
     }
@@ -75,7 +77,6 @@ export const Register = ({ navigation }) => {
                 color={myColor.secondary}
                 funOnPress={() => openImagePickerAsync()}
             />
-
             <TextBox
                 text={"Email"}
                 setTextInput={{
