@@ -1,5 +1,5 @@
 import { useState,useEffect } from "react"
-import { View, Text, Image, FlatList, Modal, TouchableOpacity, ScrollView } from "react-native"
+import { View, Text, Image, FlatList, Modal, TouchableOpacity, ScrollView, Alert } from "react-native"
 
 import { TextBox, CreateButton } from "../../component/forms"
 import { myColor } from "../../component/myColor"
@@ -12,6 +12,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 import * as AuthModel from "../../firebase/authModel"
 import * as UserModel from "../../firebase/userModel" 
+import * as PostModel from "../../firebase/postModel"
 
 import { Loading } from "../Loading"
 
@@ -19,7 +20,7 @@ export const CreatePost = () => {
     const [profile,setProfile] = useState()
     const [loading,setLoading] = useState(true)
 
-    const [post,setPost] = useState({header:"",selectId:"",description:"",link:""})
+    const [post,setPost] = useState({title:"",selectId:"",description:"",link:""})
 
     const [imgs, setImgs] = useState({ data: [] })
     const [pdfs, setPdfs] = useState({ data: [] })
@@ -117,15 +118,27 @@ export const CreatePost = () => {
     // }
     const unsuccess=(msg)=>{
         console.log(msg);
-    }
-    const success =(doc)=>{
-        setProfile(doc.data())
         setLoading(false)
+    }
+    const addPostSuccess =(doc)=>{
+        console.log(doc);
+    }
+    const getUserSuccess =(doc)=>{
+        setProfile({...doc.data(),id:doc.id})
+        setLoading(false)
+    }
+    const onSubmitPost=()=>{
+        if(post.title){
+            PostModel.addPost({...post,id:profile.id},addPostSuccess,unsuccess)
+        }
+        else{
+            Alert.alert("Please fill out the required information.")
+        }
     }
     useEffect(()=>{
         let emailCurrentUser="test";
         emailCurrentUser=AuthModel.getCurrentUser().email
-        UserModel.getUserByEamil(emailCurrentUser,success,unsuccess)
+        UserModel.getUserByEamil(emailCurrentUser,getUserSuccess,unsuccess)
     },[])
     if(loading){
         return(
@@ -210,9 +223,10 @@ export const CreatePost = () => {
                 <View style={{ flex: 1 }}>
                     <TextBox
                         text={"Title"}
+                        required={true}
                         setTextInput={{
-                            value: post.header,
-                            onChangeText: (text) =>changePost("header",text),
+                            value: post.title,
+                            onChangeText: (text) =>changePost("title",text),
                         }}
                     />
 
@@ -229,11 +243,14 @@ export const CreatePost = () => {
                         setTextInput={{
                             value: post.description,
                             onChangeText: (text) =>changePost("description",text),
+                            multiline:true,
+                            numberOfLines:4
                         }}
                     />
 
                     <TextBox
                         text={"Link"}
+                        required={true}
                         setTextInput={{
                             value: post.link,
                             onChangeText: (text) =>changePost("link",text),
@@ -256,7 +273,7 @@ export const CreatePost = () => {
                     text="POST"
                     color={myColor.accent}
                     styles={{width:"100%",margin:0}}
-                    // funOnPress={()=>addImg()}
+                    funOnPress={()=>onSubmitPost()}
                 />
                 </View>
             </ScrollView>

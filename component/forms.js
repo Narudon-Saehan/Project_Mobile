@@ -1,12 +1,15 @@
 import { View, Text, TextInput,TouchableOpacity } from "react-native"
-
+import { myColor } from "./myColor"
 
 export const TextBox = (props) => {
     return (
         <View style={{ width: "100%"}}>
-            <Text style={{ alignSelf: "flex-start" }}>{props.text}</Text>
+            <View style={{ alignSelf: "flex-start",flexDirection:"row" }}>
+                <Text >{props.text}</Text>
+                <Text style={{color:myColor.error}}>{(props.required && !props.setTextInput.value)?" *required":""}</Text>
+            </View>
             <TextInput
-                style={{ borderWidth: 1, borderRadius: 10, width: "100%" }}
+                style={{ borderWidth: 1, borderRadius: 10, width: "100%",paddingLeft:10,borderColor:(props.required && !props.setTextInput.value)?myColor.error:"black" }}
                 {...props.setTextInput}
             />
         </View>

@@ -4,8 +4,32 @@ import 'firebase/firestore'
 const DB = firebaseApp.firestore()
 const postColl = DB.collection('posts')
 
+export const addPost= (dataPost,success,unsuccess)=>{
+    const setDataPost={
+        updateDate:new Date(),
+        title:dataPost.title,
+        selectId:dataPost.selectId,
+        images:[],
+        description:dataPost.description,
+        link:dataPost.link,
+        creator: DB.doc("users/"+dataPost.id),
+        like:0,
+    }
+    postColl.add({
+        ...setDataPost
+    })
+    .then((docRef) => {
+        console.log("Document written with ID: ", docRef.id);
+        success(docRef.id)
+    })
+    .catch((error) => {
+        console.error("Error adding document: ", error);
+        unsuccess(error)
+    });
+}
+
 export const getAllPost =(success,unsuccess)=>{
-    postColl.onSnapshot( async (querySnapshot) => {
+    postColl.orderBy("updateDate", "desc").onSnapshot( async (querySnapshot) => {
         let posts = []
         let creator=""
         querySnapshot.forEach((doc) => {

@@ -9,6 +9,7 @@ import KeyboardLockView from "../../component/KeyboardLockView.js";
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { AlertMessage } from "../../component/alertMessage";
 
+import { Loading } from "../Loading";
 
 export const Login = ({ navigation }) => {
     const [fontsLoaded] = useFonts({
@@ -18,6 +19,7 @@ export const Login = ({ navigation }) => {
     });
     const [email,setEmail] = useState("")
     const [password,setPassword] = useState("")
+    const [loading,setLoading] =useState(false)
 
     const toRegister = () => {
         navigation.navigate({
@@ -41,6 +43,7 @@ export const Login = ({ navigation }) => {
         })
     }
     const onLogin=()=>{
+        setLoading(true)
         AuthModel.signInEmailPass(email,password,success,unsuccess)
     }
     if (!fontsLoaded) {
@@ -50,67 +53,81 @@ export const Login = ({ navigation }) => {
             </View>
         )
     }
+    if(loading){
+        return(
+            <SafeAreaView style={{ flex: 1,height:"100%", justifyContent: "center", alignItems: "center" ,backgroundColor:myColor.primary}}>
+                <View style={{flex:1}}>
+                    <Text style={{ fontFamily: "mali", fontSize: 50, width: "100%", justifyContent: "center",color:myColor.accent }}>MY APP</Text>
+                </View>
+                <View style={{flex: 2,width:"100%"}}>
+                    <Loading/>
+                </View>
+            </SafeAreaView>
+        )
+    }
     return (
         <SafeAreaView style={{ flex: 1,height:"100%", justifyContent: "center", alignItems: "center" ,backgroundColor:myColor.primary}}>
             {/* <ScrollView style={{flex:1,borderWidth:5,width:"100%",height:"100%"}}>
             <View style={{flex:1,justifyContent: "center", alignItems: "center"}}> */}
-            <View>
+            <View style={{flex:1}}>
                 <Text style={{ fontFamily: "mali", fontSize: 50, width: "100%", justifyContent: "center",color:myColor.accent }}>MY APP</Text>
             </View>
-            <TextBox
-                text="Email"
-                setTextInput={{
-                    value: email,
-                    onChangeText: (text) => setEmail(text),
-                }}
-            />
-            <TextBox
-                text="Password"
-                setTextInput={{
-                    value: password,
-                    onChangeText: (text) => setPassword(text),
-                }}
-            />
-            <TouchableOpacity
-                style={{
-                    width:"80%",
-                    justifyContent:"flex-end",
-                    alignItems:"flex-end",
-                    marginBottom:10,
-                    color:myColor.error,
-                }}
-                onPress={()=>toForgotPassword()}
-            >
-                <Text>Forgot Password</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={{
-                    backgroundColor:myColor.accent,
-                    borderRadius:10,
-                    padding:10,
-                    width:"80%",
-                    justifyContent:"center",
-                    alignItems:"center",
-                    marginBottom:10,
-                }}
-                onPress={()=>onLogin()}
-            >
-                <Text>LOGIN</Text>
-            </TouchableOpacity>
+            <View style={{flex: 2,width:"100%",justifyContent: "center", alignItems: "center"}}>
+                <TextBox
+                    text="Email"
+                    setTextInput={{
+                        value: email,
+                        onChangeText: (text) => setEmail(text),
+                    }}
+                />
+                <TextBox
+                    text="Password"
+                    setTextInput={{
+                        value: password,
+                        onChangeText: (text) => setPassword(text),
+                    }}
+                />
+                <TouchableOpacity
+                    style={{
+                        width:"80%",
+                        justifyContent:"flex-end",
+                        alignItems:"flex-end",
+                        marginBottom:10,
+                        color:myColor.error,
+                    }}
+                    onPress={()=>toForgotPassword()}
+                >
+                    <Text>Forgot Password</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{
+                        backgroundColor:myColor.accent,
+                        borderRadius:10,
+                        padding:10,
+                        width:"80%",
+                        justifyContent:"center",
+                        alignItems:"center",
+                        marginBottom:10,
+                    }}
+                    onPress={()=>onLogin()}
+                >
+                    <Text>LOGIN</Text>
+                </TouchableOpacity>
 
-            <TouchableOpacity
-                style={{
-                    backgroundColor:myColor.accent,
-                    borderRadius:10,
-                    padding:10,
-                    width:"80%",
-                    justifyContent:"center",
-                    alignItems:"center"
-                }}
-                onPress={() => toRegister()}
-            >
-                <Text>REGISTER</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    style={{
+                        backgroundColor:myColor.accent,
+                        borderRadius:10,
+                        padding:10,
+                        width:"80%",
+                        justifyContent:"center",
+                        alignItems:"center"
+                    }}
+                    onPress={() => toRegister()}
+                >
+                    <Text>REGISTER</Text>
+                </TouchableOpacity>
+            </View>
             {/* </View>
             </ScrollView> */}
         </SafeAreaView>
