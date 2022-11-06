@@ -6,6 +6,8 @@ import * as PostModel from "../../firebase/postModel"
 
 import { Card } from "../../component/card"
 import { Loading } from "../Loading"
+import { myFont } from "../../component/myFont"
+import { FrameLayout } from "../../component/frame"
 export const Home = () => {
     //console.log("555");
     const [post,setPost] = useState({data:[]})
@@ -118,19 +120,46 @@ export const Home = () => {
         )
     }
     return (
-        <View style={{ flex: 1, backgroundColor: myColor.primary }}>
-            <View style={{backgroundColor:myColor.secondary,width:"100%",paddingLeft:10}}>
-                <Text style={{color:myColor.accent,fontSize:50}}>Hello</Text>
-                <Text style={{color:myColor.accent,fontSize:30}}>Narudon Saehan</Text>
-            </View>
-            <FlatList
-                data={post.data}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                // ItemSeparatorComponent={() => (<Divider />)}
-                // ListEmptyComponent={headleEmpty}
-            >
-            </FlatList>
-        </View>
+        <FrameLayout content={()=>{
+            return(
+                <>
+                <View style={{backgroundColor:myColor.neutral4,width:"100%",paddingHorizontal:20,paddingTop:10,paddingBottom:30}}>
+                    <View style={{ backgroundColor: myColor.neutral3, borderRadius: 20,paddingHorizontal:10,paddingVertical:10}}>
+                            <Text style={[myFont.h3,{color:myColor.neutral2}]}>Hello</Text>
+                            <Text style={[myFont.h7,{color:myColor.neutral2}]}>Narudon Saehan</Text>
+                    </View>
+                </View>
+                    <FlatList
+                        data={post.data}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id}
+                        // ItemSeparatorComponent={() => (<Divider />)}
+                        // ListEmptyComponent={headleEmpty}
+                    >
+                    </FlatList>
+                </>
+            )
+        }}/>
+
+        // <View style={{ flex: 1, backgroundColor: myColor.primary }}>
+        //     <View style={{flex:1,paddingHorizontal:10}}>
+        //         <View style={{flex:1,backgroundColor:myColor.neutral4}}>
+        //             <View style={{backgroundColor:myColor.neutral4,width:"100%",paddingHorizontal:20,paddingTop:10,paddingBottom:30}}>
+        //                 <View style={{ backgroundColor: myColor.neutral3, borderRadius: 20,paddingHorizontal:10,paddingVertical:10}}>
+        //                     <Text style={[myFont.h3,{color:myColor.neutral2}]}>Hello</Text>
+        //                     <Text style={[myFont.h7,{color:myColor.neutral2}]}>Narudon Saehan</Text>
+        //                 </View>
+        //             </View>
+        //             <FlatList
+        //                 data={post.data}
+        //                 renderItem={renderItem}
+        //                 keyExtractor={(item) => item.id}
+        //                 // ItemSeparatorComponent={() => (<Divider />)}
+        //                 // ListEmptyComponent={headleEmpty}
+        //             >
+        //             </FlatList>
+        //         </View>
+        //     </View>
+        // </View>
     )
 }
