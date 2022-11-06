@@ -1,4 +1,5 @@
 import firebaseApp from "./connect";
+import firebase from 'firebase'
 import 'firebase/firestore'
 
 const DB = firebaseApp.firestore()
@@ -12,11 +13,11 @@ export const addUser=(email,profile,profileImg,success,unsuccess)=>{
         profileImg:profileImg,
     })
     .then((docRef) => {
-        console.log("Document written with ID: ", docRef.id);
+        //console.log("Document written with ID: ", docRef.id);
         success(docRef.id)
     })
     .catch((error) => {
-        console.error("Error adding document: ", error);
+        //console.error("Error adding document: ", error);
         unsuccess(error)
     });
 }
@@ -24,7 +25,7 @@ export const getUserByEamil =(email,success,unsuccess)=>{
     userColl.where("email","==",email)
     .onSnapshot((querySnapshot) => {
         querySnapshot.forEach((doc) => {
-            console.log(doc.id,"=>",doc.data())
+            //console.log(doc.id,"=>",doc.data())
             success(doc)
         });
     }),(error)=>{
@@ -36,7 +37,7 @@ export const getUserByEamil2 =(email,success,unsuccess)=>{
     userColl.where("email","==",email).get()
     .then((snapshot)=>{
         snapshot.forEach((doc)=>{
-            console.log(doc.id,"=>",doc.data())
+            //console.log(doc.id,"=>",doc.data())
             success(doc)
         })
     })
@@ -69,6 +70,26 @@ export const updateUserById = (id,profile,success,unsuccess) =>{
     }).catch((err)=>{
         unsuccess(err);
         console.error("error");
+    })
+}
+
+export const updateLikedPosts = (docIdUser,docIdPost,likeAndUnlike,success,unsuccess) =>{
+    let updatelike
+    if(likeAndUnlike){
+        updatelike=firebase.firestore.FieldValue.arrayUnion(DB.doc("posts/"+docIdPost))
+    }else{
+        updatelike=firebase.firestore.FieldValue.arrayRemove(DB.doc("posts/"+docIdPost))
+    }
+    
+    userColl.doc(docIdUser)
+    .update({
+        likedPosts: updatelike
+    })
+    .then(()=>{
+        success("OK")
+    })
+    .catch((err)=>{
+        unsuccess(err)
     })
 }
 

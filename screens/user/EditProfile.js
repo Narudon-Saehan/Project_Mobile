@@ -6,8 +6,9 @@ import * as AuthModel from "../../firebase/authModel"
 import * as UserModel from "../../firebase/userModel" 
 import * as ImagePicker from 'expo-image-picker';
 import * as StorageModel from "../../firebase/storageModel"
-
+import {FrameLayout} from "../../component/frame"
 import { Loading } from "../Loading"
+import {myFont} from "../../component/myFont"
 
 export const EditProfile=({navigation})=>{
     const [docID,setdocID] =useState()
@@ -69,48 +70,110 @@ export const EditProfile=({navigation})=>{
         )
     }
     return(
-        <View style={{flex:1,justifyContent:"center",alignItems:"center",backgroundColor:myColor.primary}}>
-            <Text>EditProfile</Text>
-            <Image 
-                style={{width: 150,height: 150,resizeMode: 'cover',borderRadius: 150,}}
-                source={{uri:profile.profileImg}}
-            ></Image>
-            <CreateButton
-                text="upload"
-                color={myColor.secondary}
-                funOnPress={() => openImagePickerAsync()}
-            />
+        <FrameLayout >
+            <View style={{flex:1,justifyContent:"center",alignItems:"center",paddingHorizontal:10}}>
+                {/* <Text>EditProfile</Text> */}
+                <Image 
+                    style={{width: 150,height: 150,resizeMode: 'cover',borderRadius: 150,borderWidth: 2,
+                    borderColor: "white",}}
+                    source={{uri:profile.profileImg}}
+                ></Image>
+                <CreateButton
+                    text="Upload"
+                    color={myColor.secondary}
+                    funOnPress={() => openImagePickerAsync()}
+                    pStyle={myFont.h9}
+                    styles={{width:100,
+                        height:30,
+                        padding:0,}}
+                />
 
-            <TextBox 
-                text="first name"
-                setTextInput={{
-                    value: profile.fristName,
-                    onChangeText: (text) => changeProfile("fristName", text),
-                }}
-            />
-            <TextBox 
-                text="last name"
-                setTextInput={{
-                    value: profile.lastName,
-                    onChangeText: (text) => changeProfile("lastName", text),
-                }}
-            />
+                <TextBox 
+                    text="First Name"
+                    setTextInput={{
+                        value: profile.fristName,
+                        onChangeText: (text) => changeProfile("fristName", text),
+                    }}
+                    pStyle={myFont.h7}
+                    mainStyle={{paddingBottom:0}}
+                />
+                <TextBox 
+                    text="Last Name"
+                    setTextInput={{
+                        value: profile.lastName,
+                        onChangeText: (text) => changeProfile("lastName", text),
+                    }}
+                    pStyle={myFont.h7}
+                />
 
-            <CreateButton
-                text="Save"
-                color={myColor.success}
-                styles={{width:100}}
-                funOnPress={() => onEditProfile()}
-            />
-            
-            <CreateButton
-                text="Cancel"
-                color={myColor.error}
-                styles={{width:100}}
-                funOnPress={() => navigation.navigate({
-                    name: 'Profile',
-                })}
-            />
+                <CreateButton
+                    text="Save"
+                    color={myColor.primary}
+                    styles={{width:100,
+                        height:30,padding:0}}
+                    funOnPress={() => onEditProfile()}
+                    pStyle={myFont.h9}
+                />
+                
+                <CreateButton
+                    text="Cancel"
+                    color={myColor.error}
+                    styles={{width:100,
+                        height:30,
+                        padding:0,
+                        margin:0
+                    }}
+                    funOnPress={() => navigation.navigate({
+                        name: 'Profile',
+                    })}
+                />
         </View>
+            
+            
+        </FrameLayout>
+
+        // <View style={{flex:1,justifyContent:"center",alignItems:"center",backgroundColor:myColor.primary}}>
+        //     <Text>EditProfile</Text>
+        //     <Image 
+        //         style={{width: 150,height: 150,resizeMode: 'cover',borderRadius: 150,}}
+        //         source={{uri:profile.profileImg}}
+        //     ></Image>
+        //     <CreateButton
+        //         text="upload"
+        //         color={myColor.secondary}
+        //         funOnPress={() => openImagePickerAsync()}
+        //     />
+
+        //     <TextBox 
+        //         text="first name"
+        //         setTextInput={{
+        //             value: profile.fristName,
+        //             onChangeText: (text) => changeProfile("fristName", text),
+        //         }}
+        //     />
+        //     <TextBox 
+        //         text="last name"
+        //         setTextInput={{
+        //             value: profile.lastName,
+        //             onChangeText: (text) => changeProfile("lastName", text),
+        //         }}
+        //     />
+
+        //     <CreateButton
+        //         text="Save"
+        //         color={myColor.success}
+        //         styles={{width:100}}
+        //         funOnPress={() => onEditProfile()}
+        //     />
+            
+        //     <CreateButton
+        //         text="Cancel"
+        //         color={myColor.error}
+        //         styles={{width:100}}
+        //         funOnPress={() => navigation.navigate({
+        //             name: 'Profile',
+        //         })}
+        //     />
+        // </View>
     )
 }

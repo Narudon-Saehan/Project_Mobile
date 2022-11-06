@@ -1,42 +1,44 @@
 import { useEffect, useState } from "react"
-import { View,Text,Image, TouchableOpacity,FlatList,ScrollView } from "react-native"
+import { View, Text, Image, TouchableOpacity, FlatList, ScrollView } from "react-native"
 import * as AuthModel from "../../firebase/authModel"
-import * as UserModel from "../../firebase/userModel" 
+import * as UserModel from "../../firebase/userModel"
+import * as PostModel from "../../firebase/postModel"
 import { myColor } from "../../component/myColor"
-import {myFont} from '../../component/myFont'
-import { Feather } from '@expo/vector-icons'; 
+import { myFont } from '../../component/myFont'
+import { Feather } from '@expo/vector-icons';
 
+import { Card } from "../../component/card"
 const tmpData = [
     {
-        id:0,
+        id: 0,
         title: "Test",
         img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
         creator: "Narudon Saehan",
         like: 10,
     },
     {
-        id:1,
+        id: 1,
         title: "Test",
         img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
         creator: "Narudon Saehan",
         like: 10,
     },
     {
-        id:2,
+        id: 2,
         title: "Test",
         img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
         creator: "Narudon Saehan",
         like: 10,
     },
     {
-        id:3,
+        id: 3,
         title: "Test",
         img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
         creator: "Narudon Saehan",
         like: 10,
     },
     {
-        id:4,
+        id: 4,
         title: "Test",
         img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
         creator: "Narudon Saehan",
@@ -44,27 +46,33 @@ const tmpData = [
     },
 ]
 
-export const Profile=({navigation})=>{
-    const [profile,setProfile] = useState()
-    const [loading,setLoading] = useState(true)
-    const unsuccess=(msg)=>{
+export const Profile = ({ navigation }) => {
+    const [profile, setProfile] = useState()
+    const [loading, setLoading] = useState(true)
+    const [post, setPost] = useState([])
+    const unsuccess = (msg) => {
         console.log(msg);
     }
-    const success =(doc)=>{
-        console.log(doc.data());
+    const getPostSuccess = (posts) => {
+        //console.log(posts);
+        setPost(posts);
+    }
+    const success = (doc) => {
+        //console.log("success",doc.id);
         setProfile(doc.data())
+        PostModel.getAllPostByCreator(doc.id, getPostSuccess, unsuccess)
         setLoading(false)
     }
     const signoutSuccess = () => {
         navigation.navigate('Login')
     }
-    
+
     const onSignoutPress = () => {
         console.log('Logout now')
-        AuthModel.signOut(signoutSuccess,unsuccess)
+        AuthModel.signOut(signoutSuccess, unsuccess)
     }
 
-    const renderItem = ( item, index ) => {
+    const renderItem = (item, index) => {
         return (
             // <Card 
             //     key={index} 
@@ -74,7 +82,7 @@ export const Profile=({navigation})=>{
             //     imgCreator={item.creator.profileImg } 
             //     like={item.like} 
             // />
-            <View key={index} style={{ width: "100%", marginBottom: 10 ,marginTop:(index===0)?10:0}}>
+            <View key={index} style={{ width: "100%", marginBottom: 10, marginTop: (index === 0) ? 10 : 0 }}>
                 <View style={{ marginLeft: 20, marginRight: 20, backgroundColor: myColor.neutral, borderRadius: 20 }}>
                     <Image
                         style={{ width: "100%", height: 150, resizeMode: 'cover', borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
@@ -92,108 +100,139 @@ export const Profile=({navigation})=>{
         )
     }
 
-    useEffect(()=>{
-        let emailCurrentUser="test";
-        emailCurrentUser=AuthModel.getCurrentUser().email
-        UserModel.getUserByEamil(emailCurrentUser,success,unsuccess)
-    },[])
-    if(loading){
-        return(
-            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+    useEffect(() => {
+        let emailCurrentUser = AuthModel.getCurrentUser().email
+        UserModel.getUserByEamil(emailCurrentUser, success, unsuccess)
+    }, [])
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                 <Text>Loading....</Text>
             </View>
         )
     }
-    return(
-        <View style={{flex:1,backgroundColor: myColor.primary}}>
-            <ScrollView style={{flex:1}}>
-            <View style={{height:100}}>
+    return (
+        <View style={{ flex: 1, backgroundColor: myColor.primary }}>
+            <ScrollView style={{ flex: 1 }}>
+                <View style={{ height: 100 }}>
 
-            </View>
-            {/* <Text style={{fontSize:30,marginBottom:10}}>Profile</Text> */}
-            <View style={{flex:1,paddingHorizontal:10}}>
-                <View style={{flex:1,backgroundColor:myColor.neutral4}}>
-                    <Image 
-                        style={{width: 130,
-                            height: 130,
-                            borderRadius: 63,
-                            borderWidth: 4,
-                            borderColor: "white",
-                            marginBottom:10,
-                            // alignSelf:'center',
-                            position: 'absolute',
-                            // marginTop:20,
-                            marginHorizontal:20,
-                            marginVertical:-60,
+                </View>
+                {/* <Text style={{fontSize:30,marginBottom:10}}>Profile</Text> */}
+                <View style={{ flex: 1, paddingHorizontal: 10 }}>
+                    <View style={{ flex: 1, backgroundColor: myColor.neutral4 }}>
+                        <Image
+                            style={{
+                                width: 130,
+                                height: 130,
+                                borderRadius: 63,
+                                borderWidth: 4,
+                                borderColor: "white",
+                                marginBottom: 10,
+                                // alignSelf:'center',
+                                position: 'absolute',
+                                // marginTop:20,
+                                marginHorizontal: 20,
+                                marginVertical: -60,
+                            }}
+                            source={{ uri: profile.profileImg }}
+                        ></Image>
+                        <View style={{ alignItems: "flex-end", height: 70, padding: 10 }}>
+                            <TouchableOpacity style={{
+                                width: 100,
+                                height: 30,
+                                backgroundColor: myColor.primary,
+                                // padding:10,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                borderRadius: 40,
+
+                            }}
+                                onPress={() => navigation.navigate({
+                                    name: 'EditProfile',
+                                })}
+                            >
+                                <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>Edit</Text>
+
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{
+                                width: 100,
+                                height: 30,
+                                backgroundColor: myColor.error,
+                                // padding:10,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                borderRadius: 40,
+
+                            }}
+                                onPress={() => onSignoutPress()}
+                            >
+                                <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>OUT</Text>
+
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            paddingHorizontal: 20,
+                            paddingVertical: 20
                         }}
-                        source={{uri:profile.profileImg}}
-                    ></Image>
-                    <View style={{alignItems:"flex-end",height:70,padding:10}}>
-                        <TouchableOpacity style={{width:100,
-                                                height:30,
-                                                backgroundColor:myColor.primary,
-                                                // padding:10,
-                                                justifyContent:"center",
-                                                alignItems:"center",
-                                                borderRadius:40,
-                                                
-                        }}
-                        onPress={()=>navigation.navigate({
-                            name: 'EditProfile',
-                        })}
                         >
-                            <Text style={[myFont.h9,{fontWeight:"bold",color:myColor.neutral}]}>Edit</Text>
-                            
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{flexDirection:"row",
-                                    justifyContent:"space-between",
-                                    paddingHorizontal:20,
-                                    paddingVertical:20}}
-                    >
-                        <Text style={[myFont.h8,{}]}>
-                            {profile.fristName} {profile.lastName}
-                        </Text>
-                        <View style={{flexDirection:"row"}}>
-                            <Text style={[myFont.h8,{paddingRight:10}]}>
-                                100
+                            <Text style={[myFont.h8, {}]}>
+                                {profile.fristName} {profile.lastName}
                             </Text>
-                            <Feather name="heart" size={24} color="black" />
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={[myFont.h8, { paddingRight: 10 }]}>
+                                    100
+                                </Text>
+                                <Feather name="heart" size={24} color="black" />
+                            </View>
                         </View>
-                    </View>
-                    <View style={{
-                                    height:70,
-                                    backgroundColor:myColor.neutral3,
-                    }}
-                    >
-                        <View style={{paddingHorizontal:30,
-                                        paddingVertical:10,
-                                        height:70,
-                                        flexDirection:"row",
-                                        justifyContent:"space-between",
+                        <View style={{
+                            height: 70,
+                            backgroundColor: myColor.neutral3,
                         }}
                         >
-                            <TouchableOpacity style={{alignItems:'center',justifyContent:'center',width:"30%"}}>
-                                <Text style={[myFont.h8,{}]}>44</Text>
-                                <Text style={[myFont.h8,{}]}>Post</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{alignItems:'center',justifyContent:'center',width:"30%"}}>
-                                <Text style={[myFont.h8,{}]}>1023</Text>
-                                <Text style={[myFont.h8,{}]}>Following</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{alignItems:'center',justifyContent:'center',width:"30%"}}>
-                                <Text style={[myFont.h8,{}]}>54</Text>
-                                <Text style={[myFont.h8,{}]}>Follower</Text>
-                            </TouchableOpacity>
+                            <View style={{
+                                paddingHorizontal: 30,
+                                paddingVertical: 10,
+                                height: 70,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                            }}
+                            >
+                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}>
+                                    <Text style={[myFont.h8, {}]}>{post.length}</Text>
+                                    <Text style={[myFont.h8, {}]}>Post</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}>
+                                    <Text style={[myFont.h8, {}]}>1023</Text>
+                                    <Text style={[myFont.h8, {}]}>Following</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}>
+                                    <Text style={[myFont.h8, {}]}>54</Text>
+                                    <Text style={[myFont.h8, {}]}>Follower</Text>
+                                </TouchableOpacity>
+                            </View>
+
                         </View>
-                        
-                    </View>
-                    {tmpData.map((data,index)=>{
+                        {/* {tmpData.map((data,index)=>{
                         return(
                             renderItem(data,index)
                         )
-                    })}
-                    {/* <FlatList
+                    })} */}
+                        {post.map((data, index) => {
+                            return (
+                                <Card
+                                    key={index}
+                                    img={data.images.length === 0 ? "" : data.images[0]}
+                                    title={data.title}
+                                    creator={profile.fristName + " " + profile.lastName}
+                                    imgCreator={profile.profileImg}
+                                    like={data.like}
+                                />
+                            )
+                        })}
+                        {/* <FlatList
                         data={tmpData}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.id}
@@ -201,9 +240,9 @@ export const Profile=({navigation})=>{
                         // ListEmptyComponent={headleEmpty}
                     >
                     </FlatList> */}
+                    </View>
                 </View>
-            </View>
-            {/* <Text>{profile.fristName} {profile.lastName}</Text>
+                {/* <Text>{profile.fristName} {profile.lastName}</Text>
 
             <TouchableOpacity
                 style={{width:100,backgroundColor:myColor.accent,padding:10,justifyContent:"center",alignItems:"center",borderRadius:10,marginBottom:20}}

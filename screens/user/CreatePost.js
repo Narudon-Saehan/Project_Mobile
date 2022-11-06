@@ -24,7 +24,7 @@ export const CreatePost = () => {
     const [post,setPost] = useState({title:"",selectId:"",description:"",link:""})
 
     const [imgs, setImgs] = useState({ data: [] })
-    const [pdfs, setPdfs] = useState({ data: [] })
+    const [pdfs, setPdfs] = useState({})
     const [modalVisible, setModalVisible] = useState(false);
     const [modalIndex, setModalIndex] = useState(0);
     //const temp = [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }]
@@ -43,12 +43,33 @@ export const CreatePost = () => {
                 return;
             }
             if(pickerResult.selected){
-                console.log("multi");
-                console.log(pickerResult)
+                //console.log(pickerResult.selected);
+                let imgUri = pickerResult.selected.map((data)=>{return {url:data.uri}})
+                //console.log(imgUri);
+                return imgUri
             }else{
-                console.log("one");
+                //console.log(pickerResult);
+                //console.log([{url:pickerResult.uri}]);
+                return [{url:pickerResult.uri}]
             }
-            //console.log(pickerResult);
+        }
+        catch{
+            Alert.alert("NOT UP")
+            return;
+        }
+        //setImgs({data:[...imgs.data,{id:imgs.data.length,url:pickerResult.uri}]})
+    }
+    const openImageEditPickerAsync = async () => {
+        let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            Alert.alert("Permission to access camera roll is required!");
+            return;
+        }
+        try{
+            let pickerResult = await ImagePicker.launchImageLibraryAsync();
+            if (pickerResult.cancelled === true) {
+                return;
+            }
             return pickerResult.uri
         }
         catch{
@@ -57,22 +78,23 @@ export const CreatePost = () => {
         }
         //setImgs({data:[...imgs.data,{id:imgs.data.length,url:pickerResult.uri}]})
     }
+
     const openDocumentPickerAsync = async () => {
         let permissionResult = await DocumentPicker.getDocumentAsync({ type: "application/pdf" });
-        console.log(permissionResult);
+        //console.log(permissionResult);
         if (permissionResult.type === "success"); {
             console.log(permissionResult.uri);
-            setPdfs({ data: [...pdfs.data, { id: pdfs.data.length, name: permissionResult.name, url: permissionResult.uri }] });
+            setPdfs({name: permissionResult.name, url: permissionResult.uri });
         }
     }
     const addImg = async () => {
         let imgUri = await openImagePickerAsync()
         if (imgUri) {
-            setImgs({ data: [...imgs.data, { url: imgUri }] })
+            setImgs({ data: [...imgs.data, ...imgUri] })
         }
     }
     const editImg = async (index) => {
-        let imgUri = await openImagePickerAsync()
+        let imgUri = await openImageEditPickerAsync()
         if (imgUri) {
             let newImgs = imgs.data
             newImgs[index] = { url: imgUri }
@@ -284,22 +306,24 @@ export const CreatePost = () => {
                         }}
                     />
 
-                    {pdfs.data.map((data) => {
+                    {/* {pdfs.data.map((data) => {
                         return (
                             <Text>{data.name}</Text>
                         )
-                    })}
+                    })} */}
+                    <Text>PDF  {pdfs?.name}</Text>
                     <CreateButton
                         text="upload PDF"
                         color={myColor.accent}
-                        styles={{ width: 100 }}
+                        styles={{ width: "100%",margin:0 }}
                         funOnPress={() => openDocumentPickerAsync()}
                     />
+
 
                 <CreateButton
                     text="POST"
                     color={myColor.accent}
-                    styles={{width:"100%",margin:0}}
+                    styles={{width:"100%",margin:0,marginTop:5,marginBottom:5}}
                     funOnPress={()=>onSubmitPost()}
                 />
                 </View>

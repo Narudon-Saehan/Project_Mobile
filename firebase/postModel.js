@@ -89,3 +89,37 @@ export const getAllPost =(success,unsuccess)=>{
         unsuccess(error);
     };
 }
+
+export const getAllPostByCreator =(creatorId,success,unsuccess)=>{
+    postColl.where("creator","==",DB.doc("users/"+creatorId)).onSnapshot( async (querySnapshot) => {
+        let posts = []
+        let post=
+        querySnapshot.forEach((doc) => {
+            //console.log("querySnapshot",doc.data());
+            post = doc.data()
+            delete post.creator;
+            posts.push(post)
+        });
+        success(posts)
+        // posts.map(async(data,index)=>{
+        //     creator = await data.creator.get()
+        //     posts[index]={...data,creator:creator.data()}
+        //     //console.log("data",data);
+        //     if(index === posts.length - 1 )
+        //         success(posts)
+        // })
+        //success(posts)
+    }),(error)=>{
+        unsuccess(error);
+    };
+}
+
+export const getPostById =(postId,success,unsuccess)=>{
+    postColl.doc(postId).get()
+    .then((doc)=>{
+        success(doc)
+    })
+    .catch((err)=>{
+        unsuccess(err)
+    })
+}

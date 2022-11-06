@@ -10,6 +10,8 @@ import { Subscription } from '../user/Subscription'
 import { CreatePost } from '../user/CreatePost'
 import { ForgotPassword } from '../auth/ForgotPassword'
 import { EditProfile } from '../user/EditProfile'
+import { Details } from '../user/Details'
+
 import {myColor} from '../../component/myColor'
 import { MaterialCommunityIcons,MaterialIcons,FontAwesome,Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -109,14 +111,15 @@ const MainNav=({navigation})=>{
 export const StackNav = () => {
     return (
         <Stack.Navigator
-            screenOptions={
-                { headerShown: false }
-            }
+            screenOptions={({route})=>({
+                headerShown: (route.name === "EditProfile") || (route.name === "Details")
+            })}
         >
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
+            <Stack.Screen name="Details" component={Details} />
             <Stack.Screen name="MainNav" component={MainNav} />
         </Stack.Navigator>
     )
