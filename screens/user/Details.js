@@ -83,13 +83,22 @@ export const Details = ({ route,navigation}) => {
     }
     const renderImage = ({ item, index }) => {
         return(
-            <View key={index} style={{flex:1}}>
-                <Text>Test</Text>
-                <Image
-                    style={{ width: 200, height: 150, resizeMode: 'cover', borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
-                    source={{ uri: item.url}}
-                ></Image>
+            <View key={index} style={{ flex:1, marginBottom: 10 ,marginTop:10}}>
+                <View style={{ marginLeft: 20, marginRight: 20, backgroundColor: myColor.neutral, borderRadius: 20 }}>
+                    <Image
+                        style={{ width: 300, height: 150, resizeMode: 'cover',borderRadius:20 }}
+                        source={{ uri: item.url }}
+                    ></Image>
+
+                </View>
             </View>
+            // <View key={index} style={{flex:1,width:"100%"}}>
+            //     <Text>Test</Text>
+            //     <Image
+            //         style={{ width: 200, height: 150, resizeMode: 'cover', borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+            //         source={{ uri: item.url}}
+            //     ></Image>
+            // </View>
         )
     }
 
