@@ -46,7 +46,7 @@ const tmpData = [
     },
 ]
 
-export const Profile = ({ navigation }) => {
+export const Profile = ({ navigation,route }) => {
     const [profile, setProfile] = useState()
     const [loading, setLoading] = useState(true)
     const [post, setPost] = useState([])
@@ -101,8 +101,14 @@ export const Profile = ({ navigation }) => {
     }
 
     useEffect(() => {
-        let emailCurrentUser = AuthModel.getCurrentUser().email
-        UserModel.getUserByEamil(emailCurrentUser, success, unsuccess)
+        console.log(route);
+        if(route.name === "CreatorProfile"){
+            UserModel.getUserByDocID(route.params,success,unsuccess)
+            console.log("test");
+        }else{
+            let emailCurrentUser = AuthModel.getCurrentUser().email
+            UserModel.getUserByEamil(emailCurrentUser, success, unsuccess)
+        }
     }, [])
     if (loading) {
         return (
@@ -112,7 +118,7 @@ export const Profile = ({ navigation }) => {
         )
     }
     return (
-        <View style={{ flex: 1, backgroundColor: myColor.primary }}>
+        <View style={{ flex: 1, backgroundColor: myColor.primary, paddingHorizontal: 10 }}>
             <ScrollView style={{ flex: 1 }}>
                 <View style={{ height: 100 }}>
 
@@ -220,18 +226,26 @@ export const Profile = ({ navigation }) => {
                             renderItem(data,index)
                         )
                     })} */}
-                        {post.map((data, index) => {
-                            return (
-                                <Card
-                                    key={index}
-                                    img={data.images.length === 0 ? "" : data.images[0]}
-                                    title={data.title}
-                                    creator={profile.fristName + " " + profile.lastName}
-                                    imgCreator={profile.profileImg}
-                                    like={data.like}
-                                />
-                            )
-                        })}
+                        {post.length!=0?
+                            post.map((data, index) => {
+                                return (
+                                    <Card
+                                        key={index}
+                                        img={data.images.length === 0 ? "" : data.images[0]}
+                                        mainStyle={{marginTop:7,marginBottom:1}}
+                                        title={data.title}
+                                        creator={profile.fristName + " " + profile.lastName}
+                                        imgCreator={profile.profileImg}
+                                        like={data.like}
+                                    />
+                                )
+                            })
+                        :
+                        <View style={{flex:1,height:250,justifyContent:"center",alignItems:"center"}}>
+                            <Text style={[myFont.h5,{fontWeight:'bold'}]}>Wanna try something to post?</Text>
+                        </View>
+                    }
+                        
                         {/* <FlatList
                         data={tmpData}
                         renderItem={renderItem}

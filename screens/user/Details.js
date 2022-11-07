@@ -6,7 +6,7 @@ import * as PostModel from "../../firebase/postModel"
 import { myColor } from "../../component/myColor";
 import { Loading } from "../Loading";
 import { myFont } from "../../component/myFont";
-import { TextBox,CreateButton } from "../../component/forms";
+import { TextBox,CreateButton,ShowText } from "../../component/forms";
 const tmpData = [
     {
         id:0,
@@ -71,64 +71,54 @@ export const Details = ({ route}) => {
                     </View>
                     <View style={{flex:1,
                         backgroundColor:myColor.neutral4,
-                        marginHorizontal:0,
                         borderTopStartRadius:20,
                         borderTopEndRadius:20,
-                        paddingHorizontal:10,
                         marginHorizontal:20,
+                        paddingHorizontal:10,
                         paddingTop:10
-                        }}>
+                    }}>
                         <Text style={[myFont.h7,{}]}>Description</Text>
                         {tmpData.map((data,index)=>{
                             return(
                                 renderItem(data,index)
                             )
                         })}
+                        <ShowText
+                            text="Description"
+                            pStyle={myFont.h9}
+                        />
                         <View style={{flex:1,
-                        backgroundColor:myColor.neutral,
-                        marginHorizontal:0,
-                        borderRadius:20,
-                        paddingHorizontal:10,
-                        marginHorizontal:20,
-                        paddingTop:10
+                            backgroundColor:myColor.neutral3,
+                            borderRadius:10,
+                            paddingHorizontal:10,
+                            paddingVertical:10,
+                            marginBottom:10,
+                        }}>
+                        <Text style={[myFont.h7,{}]}>Link Download</Text>  
+                            <ShowText
+                                text="Description"
+                                pStyle={myFont.h9}
+                                styles={{marginVertical:5}}
+                            />
+                        <Text style={[myFont.h7,{}]}>PDF</Text>  
+                            <ShowText
+                                text="Description"
+                                pStyle={myFont.h9}
+                                styles={{marginVertical:5}}
+                            />
+                        </View>
+
+                        {/* <View style={{flex:1,
+                                        backgroundColor:myColor.neutral,
+                                        marginHorizontal:0,
+                                        borderRadius:10,
+                                        paddingHorizontal:10,
+                                        marginHorizontal:20,
+                                        paddingVertical:10,
+                                        marginBottom:10
                         }}>
                             <Text style={[myFont.h9,{}]}>Description</Text>
-                        </View>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
-                        <Text>GGGGGG</Text>
+                        </View> */}
                     </View>
                 </View>
             </ScrollView>

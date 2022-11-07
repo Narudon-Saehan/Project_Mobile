@@ -1,4 +1,5 @@
 import firebaseApp from "./connect";
+import firebase from 'firebase'
 import 'firebase/firestore'
 
 const DB = firebaseApp.firestore()
@@ -14,6 +15,7 @@ export const addPost= (dataPost,success,unsuccess)=>{
         link:dataPost.link,
         creator: DB.doc("users/"+dataPost.id),
         like:0,
+        likeFromId:[],
     }
     postColl.add({
         ...setDataPost
@@ -122,4 +124,34 @@ export const getPostById =(postId,success,unsuccess)=>{
     .catch((err)=>{
         unsuccess(err)
     })
+}
+
+export const updateLikeFromIdPost= (docIdPost,docIdUser,likeAndUnlike,success,unsuccess)=>{
+    let updatelike
+    if(likeAndUnlike){
+        updatelike=firebase.firestore.FieldValue.arrayUnion(DB.doc("users/"+docIdUser))
+    }else{
+        updatelike=firebase.firestore.FieldValue.arrayRemove(DB.doc("users/"+docIdUser))
+    }
+    postColl.doc(docIdPost)
+    .update({
+        likeFromId: updatelike
+    })
+    .then(()=>{
+        success("OK")
+    })
+    .catch((err)=>{
+        unsuccess(err)
+    })
+    //console.log("updateImagesPost",images);
+    // console.log(docIdPost);
+    // postColl.doc(docIdPost).update({
+    //     updateDate:new Date(),
+    //     images
+    // }).then(()=>{
+    //     success("OK");
+    // }).catch((err)=>{
+    //     unsuccess(err);
+    //     console.error("error");
+    // })
 }

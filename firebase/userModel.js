@@ -60,6 +60,20 @@ export const getUserByDocID =(docID,success,unsuccess)=>{
     })
 }
 
+export const getCreatorByDocID =(docID,success,unsuccess)=>{
+    userColl.doc(docID)
+    .onSnapshot((doc) => {
+        //console.log("getCreatorByDocID",doc.data());
+        success(doc)
+        // querySnapshot.forEach((doc) => {
+        //     //console.log(doc.id,"=>",doc.data())
+        //     success(doc)
+        // });
+    }),(error)=>{
+        console.log(error);
+    };
+}
+
 export const updateUserById = (id,profile,success,unsuccess) =>{
     userColl.doc(id).update({
         fristName:profile.fristName,

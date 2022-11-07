@@ -49,8 +49,8 @@ export const EditProfile=({navigation})=>{
         setProfile(doc.data())
         setLoading(false)
     }
-    const uploadPhotoSuccess=()=>{
-        UserModel.updateUserById(docID,profile,editSuccess,unsuccess)
+    const uploadPhotoSuccess=(email,url)=>{
+        UserModel.updateUserById(docID,{...profile,profileImg:url},editSuccess,unsuccess)
     }
     const onEditProfile=()=>{
         setLoading(true)

@@ -112,7 +112,7 @@ export const StackNav = () => {
     return (
         <Stack.Navigator
             screenOptions={({route})=>({
-                headerShown: (route.name === "EditProfile") || (route.name === "Details")
+                headerShown: (route.name === "EditProfile") || (route.name === "Details") || (route.name === "CreatorProfile")
             })}
         >
             <Stack.Screen name="Login" component={Login} />
@@ -120,6 +120,7 @@ export const StackNav = () => {
             <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="Details" component={Details} />
+            <Stack.Screen name="CreatorProfile" component={Profile} />
             <Stack.Screen name="MainNav" component={MainNav} />
         </Stack.Navigator>
     )

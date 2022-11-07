@@ -13,10 +13,10 @@ export const TextBox = (props) => {
                 style={{ borderWidth: 1, 
                     borderRadius: 10, 
                     width: "100%",
-                    paddingLeft:10,
+                    paddingHorizontal:10,
                     height:50,
                     paddingStart:10,
-                    marginBottom:8,
+                    marginBottom:2,
                     backgroundColor:myColor.neutral,
                     borderColor:(props.required && !props.setTextInput.value)?myColor.error:"black",
                 }}
@@ -47,5 +47,24 @@ export const CreateButton = (props) => {
                     }]}
                 >{props.text}</Text>
             </TouchableOpacity>
+    )
+}
+
+export const ShowText = (props) => {
+    return(
+        <View style={{flex:1,
+            backgroundColor:myColor.neutral,
+            borderRadius:10,
+            paddingHorizontal:10,
+            paddingVertical:10,
+            marginBottom:10,
+            ...props.styles,
+        }}
+        >
+            <Text style={[props.pStyle,{
+                ...props.textStyles
+            }]}
+            >{props.text}</Text>
+        </View>
     )
 }

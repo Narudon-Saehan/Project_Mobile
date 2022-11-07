@@ -3,11 +3,11 @@ import { View,Image,Text, TouchableOpacity } from "react-native"
 import { myColor } from "./myColor"
 import { myFont } from "./myFont"
 import { Feather,FontAwesome } from '@expo/vector-icons';
-export const Card = (props) => {
+export const Card = (props,{navigation}) => {
     /// img={"url"}  title  creator  like imgCreator onLike
     return (
-        <View style={{ width: "100%", marginBottom: 10 }}>
-                <View style={{ marginLeft: 20, marginRight: 20, backgroundColor: myColor.neutral, borderRadius: 20,borderWidth:1}}>
+        <View style={{ width: "100%", marginBottom: 10,...props.mainStyle }}>
+                <View style={{ marginLeft: 20, marginRight: 20, backgroundColor: myColor.neutral, borderRadius: 20,borderWidth:1,...props.mainStyle}}>
                     {props.img===""?
                     <View
                         style={{ width: "100%", height: 150, borderTopLeftRadius: 20, borderTopRightRadius: 20,justifyContent:"center",alignItems:"center",backgroundColor:myColor.neutral3 }}
@@ -22,15 +22,19 @@ export const Card = (props) => {
                     }
 
                     <View style={{flexDirection:"row", paddingLeft: 20, paddingRight: 20,padding:5,alignItems:"center" }}>
-                        <Image 
-                            style={{width:50,height:50,borderRadius:50,marginRight:10}}
-                            source={{uri:props.imgCreator}}
-                        />
+                        <TouchableOpacity
+                            onPress={()=>props.toCreatorProfile(props.creatorId)}
+                        >
+                            <Image 
+                                style={{width:50,height:50,borderRadius:50,marginRight:10}}
+                                source={{uri:props.imgCreator}}
+                            />
+                        </TouchableOpacity>
                         <View style={{flex:1}}>
                             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                 <Text>{props.title}</Text>
                                 <TouchableOpacity
-                                    onPress={()=>props.onLike(props.docIdUser,props.docIdPost,!props.userLike)}
+                                    onPress={()=>props.onLike(props.docIdPost,props.docIdUser,!props.userLike)}
                                 >
                                     {props.userLike?
                                         <FontAwesome name="heart" size={24} color={myColor.error} style={{marginRight:5}}/>

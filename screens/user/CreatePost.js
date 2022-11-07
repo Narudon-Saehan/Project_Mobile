@@ -1,7 +1,7 @@
 import { useState,useEffect } from "react"
 import { View, Text, Image, FlatList, Modal, TouchableOpacity, ScrollView, Alert } from "react-native"
 
-import { TextBox, CreateButton } from "../../component/forms"
+import { TextBox, CreateButton, ShowText} from "../../component/forms"
 import { myColor } from "../../component/myColor"
 import { myFont } from "../../component/myFont"
 import { Card } from "../../component/card"
@@ -14,7 +14,7 @@ import * as AuthModel from "../../firebase/authModel"
 import * as UserModel from "../../firebase/userModel" 
 import * as PostModel from "../../firebase/postModel"
 import * as StorageModel from "../../firebase/storageModel"
-
+import {FrameLayout} from '../../component/frame'
 import { Loading } from "../Loading"
 
 export const CreatePost = () => {
@@ -189,145 +189,304 @@ export const CreatePost = () => {
         )
     }
     return (
-        <View style={{ flex: 1, backgroundColor: myColor.primary,padding:10 }}>
-            <Modal
-                visible={modalVisible}
-                transparent={true}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}
-            >
-                <ImageViewer imageUrls={imgs.data} index={modalIndex} />
-            </Modal>
-            <ScrollView style={{flex:1}}>
-                <Text style={{...myFont.h2}}>Sample Post</Text>
-                <Card 
-                    img={imgs.data.length===0?"":imgs.data[0].url}  
-                    title={post.title}  
-                    creator={profile.fristName + " " + profile.lastName}   
-                    imgCreator={profile.profileImg}
-                    like={0} 
-                />
-                <Text>Image</Text>
-                <CreateButton
-                    text="upload"
-                    color={myColor.accent}
-                    styles={{width:"100%",margin:0}}
-                    funOnPress={()=>addImg()}
-                />
-                <View style={{ flex: 5, padding: 15, height: "50%" }}>
-                    {
-                        imgs.data.length>0?
-                        
-                        <View style={{ width: "100%", height: 300, marginBottom: 10, backgroundColor: myColor.secondary, borderRadius: 10 }}>
-                            <TouchableOpacity
-                                onPress={() => [setModalIndex(modalIndex), setModalVisible(true)]}
-                            >
-                                <Image
-                                    style={{ width: "100%", height: "100%", resizeMode: "contain" }}
-                                    source={{ uri: imgs.data[modalIndex].url }}
-                                ></Image>
-                            </TouchableOpacity>
-                            <View style={{ flexDirection: "row", position: "absolute", justifyContent:"center",width:"100%" }}>
-                                <CreateButton
-                                    text="E"
-                                    color={myColor.accent}
-                                    styles={{ width: 40, height: 40, borderRadius: 5, padding: 0, margin: 0, marginRight: 5 }}
-                                    funOnPress={() => editImg(modalIndex)}
-                                />
-                                <CreateButton
-                                    text="X"
-                                    color={myColor.error}
-                                    styles={{ width: 40, height: 40, borderRadius: 5, padding: 0, margin: 0 }}
-                                    funOnPress={() => deleteImg(modalIndex)}
-                                />
-                            </View>
-                            <View style={{ flexDirection: "row", position: "absolute",justifyContent:"space-between",width:"100%"}}>
-                                <CreateButton
-                                    text="<="
-                                    color={myColor.neutral2}
-                                    styles={{ width: 40, height: 300, borderRadius: 10, padding: 0, margin: 0 ,opacity:modalIndex===0?0.3:0.6}}
-                                    textStyles={{color:myColor.neutral}}
-                                    setButton={{disabled:modalIndex===0}}
-                                    funOnPress={() => setModalIndex(modalIndex-1)}
-                                />
-                                <CreateButton
-                                    text="=>"
-                                    color={myColor.neutral2}
-                                    styles={{ width: 40, height: 300, borderRadius: 10, padding: 0, margin: 0 ,opacity:modalIndex===imgs.data.length-1?0.3:0.6 }}
-                                    textStyles={{color:myColor.neutral}}
-                                    setButton={{disabled:modalIndex===imgs.data.length-1}}
-                                    funOnPress={() => setModalIndex(modalIndex+1)}
-                                />
-                            </View>
-                    </View>
-                        
-                        :
-                        
-                        <View style={{ width: "100%", height: 300, marginBottom: 10, backgroundColor: myColor.secondary, borderRadius: 10,justifyContent:"center",alignItems:"center" }}>
-                            <Text style={{...myFont.h2}}> NO Image </Text>
-                        </View>
-                    }
-                </View>
-                <View style={{ flex: 1 }}>
-                    <TextBox
-                        text={"Title"}
-                        required={true}
-                        setTextInput={{
-                            value: post.title,
-                            onChangeText: (text) =>changePost("title",text),
-                        }}
+        <FrameLayout>
+            <View style={{flex: 1,paddingHorizontal:10,paddingTop:10}}>
+                <Modal
+                    visible={modalVisible}
+                    transparent={true}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                    }}
+                >
+                    <ImageViewer imageUrls={imgs.data} index={modalIndex} />
+                </Modal>
+                <ScrollView style={{flex:1}}>
+                    <Text style={{...myFont.h5}}>Sample Post</Text>
+                    <Card 
+                        img={imgs.data.length===0?"":imgs.data[0].url}  
+                        title={post.title}  
+                        creator={profile.fristName + " " + profile.lastName}   
+                        imgCreator={profile.profileImg}
+                        like={0}
+                        mainStyle={{marginLeft: 0, marginRight: 0}}
                     />
-
-                    <TextBox
-                        text={"Select ID"}
-                        setTextInput={{
-                            value: post.selectId,
-                            onChangeText: (text) =>changePost("selectId",text),
-                        }}
-                    />
-
-                    <TextBox
-                        text={"Description"}
-                        setTextInput={{
-                            value: post.description,
-                            onChangeText: (text) =>changePost("description",text),
-                            multiline:true,
-                            numberOfLines:4
-                        }}
-                    />
-
-                    <TextBox
-                        text={"Link"}
-                        required={true}
-                        setTextInput={{
-                            value: post.link,
-                            onChangeText: (text) =>changePost("link",text),
-                        }}
-                    />
-
-                    {/* {pdfs.data.map((data) => {
-                        return (
-                            <Text>{data.name}</Text>
-                        )
-                    })} */}
-                    <Text>PDF  {pdfs?.name}</Text>
+                    <Text style={[myFont.h9,{}]}>Image</Text>
                     <CreateButton
-                        text="upload PDF"
+                        text="upload"
                         color={myColor.accent}
-                        styles={{ width: "100%",margin:0 }}
-                        funOnPress={() => openDocumentPickerAsync()}
+                        styles={{width:"100%",margin:0,marginTop:3}}
+                        funOnPress={()=>addImg()}
+                        pStyle={myFont.h9}
                     />
+                    <View style={{ flex: 5, paddingTop: 10, height: "50%" }}>
+                        {
+                            imgs.data.length>0?
+                            
+                            <View style={{ width: "100%", height: 300, marginBottom: 10, backgroundColor: myColor.neutral5, borderRadius: 10 }}>
+                                <TouchableOpacity
+                                    onPress={() => [setModalIndex(modalIndex), setModalVisible(true)]}
+                                >
+                                    <Image
+                                        style={{ width: "100%", height: "100%", resizeMode: "contain" }}
+                                        source={{ uri: imgs.data[modalIndex].url }}
+                                    ></Image>
+                                </TouchableOpacity>
+                                <View style={{ flexDirection: "row", position: "absolute", justifyContent:"center",width:"100%" }}>
+                                    <CreateButton
+                                        text="E"
+                                        color={myColor.accent}
+                                        styles={{ width: 40, height: 40, borderRadius: 5, padding: 0, margin: 0, marginRight: 5 }}
+                                        funOnPress={() => editImg(modalIndex)}
+                                    />
+                                    <CreateButton
+                                        text="X"
+                                        color={myColor.error}
+                                        styles={{ width: 40, height: 40, borderRadius: 5, padding: 0, margin: 0 }}
+                                        funOnPress={() => deleteImg(modalIndex)}
+                                    />
+                                </View>
+                                <View style={{ flexDirection: "row", position: "absolute",justifyContent:"space-between",width:"100%"}}>
+                                    <CreateButton
+                                        text="<="
+                                        color={myColor.neutral2}
+                                        styles={{ width: 40, height: 300, borderRadius: 10, padding: 0, margin: 0 ,opacity:modalIndex===0?0.3:0.6}}
+                                        textStyles={{color:myColor.neutral}}
+                                        setButton={{disabled:modalIndex===0}}
+                                        funOnPress={() => setModalIndex(modalIndex-1)}
+                                    />
+                                    <CreateButton
+                                        text="=>"
+                                        color={myColor.neutral2}
+                                        styles={{ width: 40, height: 300, borderRadius: 10, padding: 0, margin: 0 ,opacity:modalIndex===imgs.data.length-1?0.3:0.6 }}
+                                        textStyles={{color:myColor.neutral}}
+                                        setButton={{disabled:modalIndex===imgs.data.length-1}}
+                                        funOnPress={() => setModalIndex(modalIndex+1)}
+                                    />
+                                </View>
+                        </View>
+                            
+                            :
+                            
+                            <View style={{ width: "100%", height: 300, marginBottom: 10, backgroundColor: myColor.secondary, borderRadius: 10,justifyContent:"center",alignItems:"center" }}>
+                                <Text style={{...myFont.h2}}> NO Image </Text>
+                            </View>
+                        }
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <TextBox
+                            text={"Title"}
+                            required={true}
+                            setTextInput={{
+                                value: post.title,
+                                onChangeText: (text) =>changePost("title",text),
+                            }}
+                            pStyle={myFont.h9}
+                        />
+
+                        <TextBox
+                            text={"Select ID"}
+                            setTextInput={{
+                                value: post.selectId,
+                                onChangeText: (text) =>changePost("selectId",text),
+                            }}
+                            pStyle={myFont.h9}
+                        />
+
+                        <TextBox
+                            text={"Description"}
+                            setTextInput={{
+                                value: post.description,
+                                onChangeText: (text) =>changePost("description",text),
+                                multiline:true,
+                                numberOfLines:4
+                            }}
+                            pStyle={myFont.h9}
+                        />
+
+                        <TextBox
+                            text={"Link"}
+                            required={true}
+                            setTextInput={{
+                                value: post.link,
+                                onChangeText: (text) =>changePost("link",text),
+                            }}
+                            pStyle={myFont.h9}
+                        />
+
+                        {/* {pdfs.data.map((data) => {
+                            return (
+                                <Text>{data.name}</Text>
+                            )
+                        })} */}
+
+                        <View style={{flexDirection:"row"}}>
+                            <Text style={myFont.h9}>PDF: </Text>  
+                            <Text style={{
+                                textDecorationLine:'underline',
+                                fontStyle:'italic',
+                                color:myColor.success}}
+                            >{pdfs?.name}</Text>  
+                        </View>
+                        <CreateButton
+                            text="upload PDF"
+                            color={myColor.accent}
+                            styles={{ width: "100%",margin:0 }}
+                            funOnPress={() => openDocumentPickerAsync()}
+                            pStyle={myFont.h9}
+                        />
 
 
-                <CreateButton
-                    text="POST"
-                    color={myColor.accent}
-                    styles={{width:"100%",margin:0,marginTop:5,marginBottom:5}}
-                    funOnPress={()=>onSubmitPost()}
-                />
-                </View>
-            </ScrollView>
-        </View>
+                    <CreateButton
+                        text="POST"
+                        color={myColor.primary}
+                        styles={{width:"100%",margin:0,marginTop:5,marginBottom:5}}
+                        funOnPress={()=>onSubmitPost()}
+                        pStyle={myFont.h9}
+                        textStyles={{fontWeight:'bold',color:myColor.neutral}}
+                    />
+                    </View>
+                </ScrollView>
+            </View>
+        </FrameLayout>
+        // <View style={{ flex: 1, backgroundColor: myColor.primary,padding:10 }}>
+        //     <Modal
+        //         visible={modalVisible}
+        //         transparent={true}
+        //         onRequestClose={() => {
+        //             setModalVisible(!modalVisible);
+        //         }}
+        //     >
+        //         <ImageViewer imageUrls={imgs.data} index={modalIndex} />
+        //     </Modal>
+        //     <ScrollView style={{flex:1}}>
+        //         <Text style={{...myFont.h2}}>Sample Post</Text>
+        //         <Card 
+        //             img={imgs.data.length===0?"":imgs.data[0].url}  
+        //             title={post.title}  
+        //             creator={profile.fristName + " " + profile.lastName}   
+        //             imgCreator={profile.profileImg}
+        //             like={0} 
+        //         />
+        //         <Text>Image</Text>
+        //         <CreateButton
+        //             text="upload"
+        //             color={myColor.accent}
+        //             styles={{width:"100%",margin:0}}
+        //             funOnPress={()=>addImg()}
+        //         />
+        //         <View style={{ flex: 5, padding: 15, height: "50%" }}>
+        //             {
+        //                 imgs.data.length>0?
+                        
+        //                 <View style={{ width: "100%", height: 300, marginBottom: 10, backgroundColor: myColor.secondary, borderRadius: 10 }}>
+        //                     <TouchableOpacity
+        //                         onPress={() => [setModalIndex(modalIndex), setModalVisible(true)]}
+        //                     >
+        //                         <Image
+        //                             style={{ width: "100%", height: "100%", resizeMode: "contain" }}
+        //                             source={{ uri: imgs.data[modalIndex].url }}
+        //                         ></Image>
+        //                     </TouchableOpacity>
+        //                     <View style={{ flexDirection: "row", position: "absolute", justifyContent:"center",width:"100%" }}>
+        //                         <CreateButton
+        //                             text="E"
+        //                             color={myColor.accent}
+        //                             styles={{ width: 40, height: 40, borderRadius: 5, padding: 0, margin: 0, marginRight: 5 }}
+        //                             funOnPress={() => editImg(modalIndex)}
+        //                         />
+        //                         <CreateButton
+        //                             text="X"
+        //                             color={myColor.error}
+        //                             styles={{ width: 40, height: 40, borderRadius: 5, padding: 0, margin: 0 }}
+        //                             funOnPress={() => deleteImg(modalIndex)}
+        //                         />
+        //                     </View>
+        //                     <View style={{ flexDirection: "row", position: "absolute",justifyContent:"space-between",width:"100%"}}>
+        //                         <CreateButton
+        //                             text="<="
+        //                             color={myColor.neutral2}
+        //                             styles={{ width: 40, height: 300, borderRadius: 10, padding: 0, margin: 0 ,opacity:modalIndex===0?0.3:0.6}}
+        //                             textStyles={{color:myColor.neutral}}
+        //                             setButton={{disabled:modalIndex===0}}
+        //                             funOnPress={() => setModalIndex(modalIndex-1)}
+        //                         />
+        //                         <CreateButton
+        //                             text="=>"
+        //                             color={myColor.neutral2}
+        //                             styles={{ width: 40, height: 300, borderRadius: 10, padding: 0, margin: 0 ,opacity:modalIndex===imgs.data.length-1?0.3:0.6 }}
+        //                             textStyles={{color:myColor.neutral}}
+        //                             setButton={{disabled:modalIndex===imgs.data.length-1}}
+        //                             funOnPress={() => setModalIndex(modalIndex+1)}
+        //                         />
+        //                     </View>
+        //             </View>
+                        
+        //                 :
+                        
+        //                 <View style={{ width: "100%", height: 300, marginBottom: 10, backgroundColor: myColor.secondary, borderRadius: 10,justifyContent:"center",alignItems:"center" }}>
+        //                     <Text style={{...myFont.h2}}> NO Image </Text>
+        //                 </View>
+        //             }
+        //         </View>
+        //         <View style={{ flex: 1 }}>
+        //             <TextBox
+        //                 text={"Title"}
+        //                 required={true}
+        //                 setTextInput={{
+        //                     value: post.title,
+        //                     onChangeText: (text) =>changePost("title",text),
+        //                 }}
+        //             />
+
+        //             <TextBox
+        //                 text={"Select ID"}
+        //                 setTextInput={{
+        //                     value: post.selectId,
+        //                     onChangeText: (text) =>changePost("selectId",text),
+        //                 }}
+        //             />
+
+        //             <TextBox
+        //                 text={"Description"}
+        //                 setTextInput={{
+        //                     value: post.description,
+        //                     onChangeText: (text) =>changePost("description",text),
+        //                     multiline:true,
+        //                     numberOfLines:4
+        //                 }}
+        //             />
+
+        //             <TextBox
+        //                 text={"Link"}
+        //                 required={true}
+        //                 setTextInput={{
+        //                     value: post.link,
+        //                     onChangeText: (text) =>changePost("link",text),
+        //                 }}
+        //             />
+
+        //             {/* {pdfs.data.map((data) => {
+        //                 return (
+        //                     <Text>{data.name}</Text>
+        //                 )
+        //             })} */}
+        //             <Text>PDF  {pdfs?.name}</Text>
+        //             <CreateButton
+        //                 text="upload PDF"
+        //                 color={myColor.accent}
+        //                 styles={{ width: "100%",margin:0 }}
+        //                 funOnPress={() => openDocumentPickerAsync()}
+        //             />
+
+
+        //         <CreateButton
+        //             text="POST"
+        //             color={myColor.accent}
+        //             styles={{width:"100%",margin:0,marginTop:5,marginBottom:5}}
+        //             funOnPress={()=>onSubmitPost()}
+        //         />
+        //         </View>
+        //     </ScrollView>
+        // </View>
     )
 }
