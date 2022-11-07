@@ -9,7 +9,8 @@ const todosSlice = createSlice({
     reducers:{
 
         updateTodo(state,action){
-            console.log(`updateTodo activated payload = ${action.payload}`);
+            console.log(`updateTodo activated payload = ${action.payload.docIdUser}`);
+            state.docIdUser = action.payload.docIdUser
             //state.state
         },
     }

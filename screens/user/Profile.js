@@ -8,48 +8,15 @@ import { myFont } from '../../component/myFont'
 import { Feather } from '@expo/vector-icons';
 
 import { Card, FollowCard } from "../../component/card"
-const tmpData = [
-    {
-        id: 0,
-        title: "Test",
-        img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
-        creator: "Narudon Saehan",
-        like: 10,
-    },
-    {
-        id: 1,
-        title: "Test",
-        img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
-        creator: "Narudon Saehan",
-        like: 10,
-    },
-    {
-        id: 2,
-        title: "Test",
-        img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
-        creator: "Narudon Saehan",
-        like: 10,
-    },
-    {
-        id: 3,
-        title: "Test",
-        img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
-        creator: "Narudon Saehan",
-        like: 10,
-    },
-    {
-        id: 4,
-        title: "Test",
-        img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
-        creator: "Narudon Saehan",
-        like: 10,
-    },
-]
+import { useSelector } from 'react-redux'
 
 export const Profile = ({ navigation,route }) => {
     const routeName = route.name
+    const docIdUserLogin = useSelector((state) => state.todos.docIdUser)
     const [profile, setProfile] = useState()
+    const [checkFollower, setCheckFollower] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [loading2, setLoading2] = useState(false)
     const [post, setPost] = useState([])
     const [pageBar,setPageBar] = useState("Post")
     const [pageFollowing,setPageFollowing] = useState(false)
@@ -61,9 +28,22 @@ export const Profile = ({ navigation,route }) => {
         //console.log(posts);
         setPost(posts);
     }
+    const getProfileUserLoginSuccess = (doc) => {
+        let tempFollowing = []
+        doc.data().following.map((data)=>{
+            tempFollowing.push(data._delegate._key.path.segments[6])
+        })
+        if(tempFollowing.find((data)=>data === route.params)!== undefined)
+            setCheckFollower(true)
+        else
+            setCheckFollower(false)
+        //console.log("getProfileUserLoginSuccess");
+        //setCheckFollower({...doc.data(),docId:doc.id})
+        setLoading2(false)
+    }
     const success = (doc) => {
         //console.log("success",doc.id);
-        setProfile(doc.data())
+        setProfile({...doc.data(),docId:doc.id})
         PostModel.getAllPostByCreator(doc.id, getPostSuccess, unsuccess)
         setLoading(false)
     }
@@ -74,6 +54,10 @@ export const Profile = ({ navigation,route }) => {
     const onSignoutPress = () => {
         console.log('Logout now')
         AuthModel.signOut(signoutSuccess, unsuccess)
+    }
+    const onFollowingPress = () => {
+        UserModel.updateFollowing(docIdUserLogin,profile.docId,!checkFollower,unsuccess,unsuccess)
+        //AuthModel.signOut(signoutSuccess, unsuccess)
     }
 
     const pageBarOptions = () => {
@@ -172,14 +156,15 @@ export const Profile = ({ navigation,route }) => {
     useEffect(() => {
         //console.log(route);
         if(routeName === "CreatorProfile"){
+            setLoading2(true)
             UserModel.getUserByDocID(route.params,success,unsuccess)
-            console.log("test");
+            UserModel.getUserByDocID(docIdUserLogin,getProfileUserLoginSuccess,unsuccess)
         }else{
             let emailCurrentUser = AuthModel.getCurrentUser().email
             UserModel.getUserByEamil(emailCurrentUser, success, unsuccess)
         }
     }, [])
-    if (loading) {
+    if (loading || loading2) {
         return (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                 <Text>Loading....</Text>
@@ -254,9 +239,9 @@ export const Profile = ({ navigation,route }) => {
                                     alignItems: "center",
                                     borderRadius: 40,
                                     }}
-                                    // onPress={() => onSignoutPress()}
+                                    onPress={() => onFollowingPress()}
                                 >
-                                    <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>Follower</Text>
+                                    <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>{checkFollower?"UnFollower":"Follower"}</Text>
                                 </TouchableOpacity>
                                 </>
                             }

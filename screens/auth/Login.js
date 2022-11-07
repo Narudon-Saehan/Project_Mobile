@@ -4,11 +4,17 @@ import {
 import { useFonts } from "expo-font"
 import { useState } from "react";
 import { TextBox } from "../../component/forms";
+
 import * as AuthModel from "../../firebase/authModel"
+import * as UserModel from "../../firebase/userModel"
+
 import { myColor } from "../../component/myColor";
 import KeyboardLockView from "../../component/KeyboardLockView.js";
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { AlertMessage } from "../../component/alertMessage";
+
+import { useDispatch } from 'react-redux'
+import { updateTodo } from "../../redux/todos/todosSlice";
 
 import { Loading } from "../Loading";
 
@@ -18,6 +24,7 @@ export const Login = ({ navigation }) => {
         'cursive': require('../../assets/fonts/Cursive-standard.ttf'),
         'fuzzyBubbles': require('../../assets/fonts/FuzzyBubbles-Bold.ttf'),
     });
+    const dispatch = useDispatch()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
@@ -37,17 +44,28 @@ export const Login = ({ navigation }) => {
         setLoading(false)
         AlertMessage(msg)
     }
-    const success = (msg) => {
+    const success = (doc) => {
         //console.log(msg);
         //AlertMessage(msg)
+        console.log(doc.id);
+        dispatch(updateTodo({docIdUser:doc.id}))
         setLoading(false)
         navigation.navigate({
             name: 'MainNav',
         })
     }
+    const LoginSuccess = (msg) => {
+        UserModel.getUserByEamil2(email,success,unsuccess)
+        //console.log(msg);
+        //AlertMessage(msg)
+        //setLoading(false)
+        // navigation.navigate({
+        //     name: 'MainNav',
+        // })
+    }
     const onLogin = () => {
         setLoading(true)
-        AuthModel.signInEmailPass(email, password, success, unsuccess)
+        AuthModel.signInEmailPass(email, password, LoginSuccess, unsuccess)
     }
     if (!fontsLoaded) {
         return (

@@ -47,17 +47,23 @@ export const getUserByEamil2 =(email,success,unsuccess)=>{
 }
 
 export const getUserByDocID =(docID,success,unsuccess)=>{
-    userColl.doc(docID).get()
-    .then((doc)=>{
-        if(doc.exists){
-            success(doc)
-        }else{
-            unsuccess("User not found")
-        }
-    })
-    .catch((err)=>{
-        unsuccess(err)
-    })
+    userColl.doc(docID)
+    .onSnapshot((doc) => {
+        success(doc)
+    }),(error)=>{
+        unsuccess(error);
+    };
+    // userColl.doc(docID).get()
+    // .then((doc)=>{
+    //     if(doc.exists){
+    //         success(doc)
+    //     }else{
+    //         unsuccess("User not found")
+    //     }
+    // })
+    // .catch((err)=>{
+    //     unsuccess(err)
+    // })
 }
 
 export const getCreatorByDocID =(docID,success,unsuccess)=>{
@@ -71,6 +77,7 @@ export const getCreatorByDocID =(docID,success,unsuccess)=>{
         // });
     }),(error)=>{
         console.log(error);
+        unsuccess(error)
     };
 }
 
@@ -84,6 +91,26 @@ export const updateUserById = (id,profile,success,unsuccess) =>{
     }).catch((err)=>{
         unsuccess(err);
         console.error("error");
+    })
+}
+
+export const updateFollowing = (docIdUser,docIdOtherUser,follUnfoll,success,unsuccess) =>{
+    let following
+    if(follUnfoll){
+        following=firebase.firestore.FieldValue.arrayUnion(DB.doc("users/"+docIdOtherUser))
+    }else{
+        following=firebase.firestore.FieldValue.arrayRemove(DB.doc("users/"+docIdOtherUser))
+    }
+    
+    userColl.doc(docIdUser)
+    .update({
+        following: following
+    })
+    .then(()=>{
+        success("OK")
+    })
+    .catch((err)=>{
+        unsuccess(err)
     })
 }
 
