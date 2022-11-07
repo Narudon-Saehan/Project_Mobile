@@ -11,12 +11,14 @@ import { CreatePost } from '../user/CreatePost'
 import { ForgotPassword } from '../auth/ForgotPassword'
 import { EditProfile } from '../user/EditProfile'
 import { Details } from '../user/Details'
+import { Following } from '../user/Following'
 
 import {myColor} from '../../component/myColor'
 import { MaterialCommunityIcons,MaterialIcons,FontAwesome,Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Alert,TouchableOpacity } from 'react-native'
 import { Loading } from '../Loading'
+
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -112,7 +114,10 @@ export const StackNav = () => {
     return (
         <Stack.Navigator
             screenOptions={({route})=>({
-                headerShown: (route.name === "EditProfile") || (route.name === "Details") || (route.name === "CreatorProfile")
+                headerShown: (route.name === "EditProfile") || 
+                            (route.name === "Details") ||
+                            (route.name === "CreatorProfile") || 
+                            (route.name === "Following")
             })}
         >
             <Stack.Screen name="Login" component={Login} />
@@ -122,6 +127,7 @@ export const StackNav = () => {
             <Stack.Screen name="Details" component={Details} />
             <Stack.Screen name="CreatorProfile" component={Profile} />
             <Stack.Screen name="MainNav" component={MainNav} />
+            <Stack.Screen name="Following" component={Following}/>
         </Stack.Navigator>
     )
 }

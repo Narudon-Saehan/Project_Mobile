@@ -10,6 +10,6 @@ export const myFont={
     h7:{fontSize:20},
     h8:{fontSize:18},
     h9:{fontSize:16},
+    h11:{fontSize:14},
     h10:{fontSize:12},
-    
 }

@@ -7,7 +7,7 @@ import { myColor } from "../../component/myColor"
 import { myFont } from '../../component/myFont'
 import { Feather } from '@expo/vector-icons';
 
-import { Card } from "../../component/card"
+import { Card, FollowCard } from "../../component/card"
 const tmpData = [
     {
         id: 0,
@@ -50,6 +50,9 @@ export const Profile = ({ navigation,route }) => {
     const [profile, setProfile] = useState()
     const [loading, setLoading] = useState(true)
     const [post, setPost] = useState([])
+    const [pageBar,setPageBar] = useState("Post")
+    const [pageFollowing,setPageFollowing] = useState(false)
+    const [pageFollower,setPageFollower] = useState(false)
     const unsuccess = (msg) => {
         console.log(msg);
     }
@@ -72,6 +75,71 @@ export const Profile = ({ navigation,route }) => {
         AuthModel.signOut(signoutSuccess, unsuccess)
     }
 
+    const pageBarOptions = () => {
+        if (pageBar === "Post") {
+            return(<>
+            {post.length!=0?
+                post.map((data, index) => {
+                    return (
+                        <Card
+                            key={index}
+                            img={data.images.length === 0 ? "" : data.images[0]}
+                            mainStyle={{marginTop:7,marginBottom:1}}
+                            title={data.title}
+                            creator={profile.fristName + " " + profile.lastName}
+                            imgCreator={profile.profileImg}
+                            like={data.like}
+                        />
+                    )
+                })
+            :
+                <View style={{flex:1,height:250,justifyContent:"center",alignItems:"center"}}>
+                    <Text style={[myFont.h5,{fontWeight:'bold'}]}>Wanna try something to post?</Text>
+                </View>
+            }
+            </>)
+        }else if(pageBar === "Following"){
+            return(
+                <>
+                    <FollowCard
+                        nameText="Narudon Saehan"
+                        text="Follower"
+                        color={myColor.primary}
+                        pStyle={myFont.h10}
+                    />
+                    <FollowCard
+                        nameText="Narudon Saehan2"  
+                        text="Following"
+                        color={myColor.neutral}
+                        TborderColor={myColor.primary}
+                        TborderWidth={1}
+                        pStyle={myFont.h10}
+                    />
+                </>
+                )
+        }else if(pageBar === "Follower"){
+            return(
+            <>
+                <FollowCard
+                    checkSelfFollower="Sapol Mahawong"
+                    nameText="Narudon Saehan"
+                    text="Follower"
+                    color={myColor.primary}
+                    pStyle={myFont.h10}
+                />
+                <FollowCard
+                    checkSelfFollower="Sapol Mahawongewhggegegegergergewgggggeg33"
+                    nameText="Sapol Mahawongewhggegegegergergewgggggeg33"
+                    text="Following"
+                    color={myColor.neutral}
+                    TborderColor={myColor.primary}
+                    TborderWidth={1}
+                    pStyle={myFont.h10}
+                />
+            </>
+            )
+        }
+    }
     const renderItem = (item, index) => {
         return (
             // <Card 
@@ -118,7 +186,7 @@ export const Profile = ({ navigation,route }) => {
         )
     }
     return (
-        <View style={{ flex: 1, backgroundColor: myColor.primary, paddingHorizontal: 10 }}>
+        <View style={{ flex: 1, backgroundColor: myColor.primary, paddingHorizontal: 0 }}>
             <ScrollView style={{ flex: 1 }}>
                 <View style={{ height: 100 }}>
 
@@ -206,15 +274,19 @@ export const Profile = ({ navigation,route }) => {
                                 justifyContent: "space-between",
                             }}
                             >
-                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}>
+                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}
+                                    onPress={()=>{setPageBar("Post")}}>
                                     <Text style={[myFont.h8, {}]}>{post.length}</Text>
                                     <Text style={[myFont.h8, {}]}>Post</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}>
+                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}
+                                                    onPress={()=>{setPageBar("Following")}}
+                                >
                                     <Text style={[myFont.h8, {}]}>1023</Text>
                                     <Text style={[myFont.h8, {}]}>Following</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}>
+                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}
+                                    onPress={()=>{setPageBar("Follower")}}>
                                     <Text style={[myFont.h8, {}]}>54</Text>
                                     <Text style={[myFont.h8, {}]}>Follower</Text>
                                 </TouchableOpacity>
@@ -226,7 +298,8 @@ export const Profile = ({ navigation,route }) => {
                             renderItem(data,index)
                         )
                     })} */}
-                        {post.length!=0?
+                        {pageBarOptions()}
+                        {/* {post.length!=0?
                             post.map((data, index) => {
                                 return (
                                     <Card
@@ -241,38 +314,12 @@ export const Profile = ({ navigation,route }) => {
                                 )
                             })
                         :
-                        <View style={{flex:1,height:250,justifyContent:"center",alignItems:"center"}}>
-                            <Text style={[myFont.h5,{fontWeight:'bold'}]}>Wanna try something to post?</Text>
-                        </View>
-                    }
-                        
-                        {/* <FlatList
-                        data={tmpData}
-                        renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
-                        // ItemSeparatorComponent={() => (<Divider />)}
-                        // ListEmptyComponent={headleEmpty}
-                    >
-                    </FlatList> */}
+                            <View style={{flex:1,height:250,justifyContent:"center",alignItems:"center"}}>
+                                <Text style={[myFont.h5,{fontWeight:'bold'}]}>Wanna try something to post?</Text>
+                            </View>
+                        } */}
                     </View>
                 </View>
-                {/* <Text>{profile.fristName} {profile.lastName}</Text>
-
-            <TouchableOpacity
-                style={{width:100,backgroundColor:myColor.accent,padding:10,justifyContent:"center",alignItems:"center",borderRadius:10,marginBottom:20}}
-                onPress={()=>navigation.navigate({
-                    name: 'EditProfile',
-                })}
-            >
-                <Text>Edit Profile</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                style={{width:100,backgroundColor:myColor.error,padding:10,justifyContent:"center",alignItems:"center",borderRadius:10}}
-                onPress={()=>onSignoutPress()}
-            >
-                <Text>LOGOUT</Text>
-            </TouchableOpacity> */}
             </ScrollView>
         </View>
     )

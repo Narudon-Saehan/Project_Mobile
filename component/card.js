@@ -3,6 +3,8 @@ import { View,Image,Text, TouchableOpacity } from "react-native"
 import { myColor } from "./myColor"
 import { myFont } from "./myFont"
 import { Feather,FontAwesome } from '@expo/vector-icons';
+import { CreateButton } from "./forms";
+
 export const Card = (props,{navigation}) => {
     /// img={"url"}  title  creator  like imgCreator onLike
     return (
@@ -51,5 +53,81 @@ export const Card = (props,{navigation}) => {
                     </View>
                 </View>
             </View>
+    )
+}
+
+export const FollowCard = (props) => {
+    return(
+        <View style={{flex:1,width:"100%"}}>              
+            <View style={{ backgroundColor:myColor.neutral,
+                borderRadius:20,
+                paddingHorizontal:10,
+                paddingVertical:10,
+                marginHorizontal:10,
+                marginTop:10,
+                marginBottom:5,
+                flexDirection:'row',
+                alignItems:'center',
+                justifyContent:'space-between',
+                ...props.Styles,
+            }}>
+                <Image
+                    style={{width:60,
+                        height:60,
+                        borderRadius:50,
+                        marginRight:10,
+                        ...props.iStyles,
+                    }}
+                    source={{uri:"https://firebasestorage.googleapis.com/v0/b/project-mobile-ea735.appspot.com/o/profile_image%2Fuser.jpg?alt=media&token=f28170a0-1d7f-42aa-8c49-7207ab17feb7"}}
+                />
+                <Text style={[myFont.h11,{flex:3,...props.nameTextStyles}]}>
+                    {props.nameText}
+                </Text>
+                {props.checkSelfFollower===props.nameText?
+                    <View style={{width:80,height:30,margin:10,}}/>
+                    :
+                    <TouchableOpacity
+                        style={{width:80,
+                            height:30,
+                            backgroundColor:props.color,
+                            borderRadius:10,
+                            borderColor:props.TborderColor,
+                            borderWidth:props.TborderWidth,
+                            justifyContent:"center",
+                            alignItems:"center",
+                            margin:10,
+                        }}
+                        onPress={props.funOnPress}
+                        {...props.setButton}
+                    >
+                        <Text
+                            style={[props.pStyle,{
+                                ...props.textStyles
+                            }]}
+                        >{props.text}</Text>
+                    </TouchableOpacity>
+                }
+                {/* <TouchableOpacity
+                    style={{width:80,
+                        height:30,
+                        backgroundColor:props.color,
+                        borderRadius:10,
+                        borderColor:props.TborderColor,
+                        borderWidth:props.TborderWidth,
+                        justifyContent:"center",
+                        alignItems:"center",
+                        margin:10,
+                    }}
+                    onPress={props.funOnPress}
+                    {...props.setButton}
+                >
+                    <Text
+                        style={[props.pStyle,{
+                            ...props.textStyles
+                        }]}
+                    >{props.text}</Text>
+                </TouchableOpacity> */}
+            </View>
+        </View>
     )
 }

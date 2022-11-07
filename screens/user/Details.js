@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
-import {View, Text,Image,ScrollView} from "react-native"
+import {View, Text,Image,ScrollView , Modal ,Button,FlatList} from "react-native"
 
 import * as UserModel from "../../firebase/userModel" 
 import * as PostModel from "../../firebase/postModel"
+import * as AuthModel from "../../firebase/authModel"
+
+import ImageViewer from 'react-native-image-zoom-viewer';
+
 import { myColor } from "../../component/myColor";
 import { Loading } from "../Loading";
 import { myFont } from "../../component/myFont";
 import { TextBox,CreateButton,ShowText } from "../../component/forms";
+import { Card } from "../../component/card"
 const tmpData = [
     {
         id:0,
@@ -17,20 +22,45 @@ const tmpData = [
     },
 ]
 
-export const Details = ({ route}) => {
+export const Details = ({ route,navigation}) => {
     const {postId} =  route.params
     const [creator,setCreator] = useState()
     const [post,setPost] = useState()
+    const [profile,setProfile] = useState()
+    const [modalVisible, setModalVisible] = useState(false);
+    const [likePost,setLikePost] = useState()
+    const [imgs,setImgs] = useState({data: []})
     const [loading,setLoading] = useState(true)
     const unsuccess=(err)=>{
         console.log(err);
     }
+    const getCreatorSuccess=(doc)=>{
+        //console.log("getCreatorSuccess",doc.data());
+        setCreator({...doc.data(),docId:doc.id})
+        //console.log("getCreatorSuccess",post.images);
+        //setModalVisible(true)
+    }
     const success=(doc)=>{
         //console.log(doc.data());
-        setPost(doc.data())
+        let tempPost = doc.data()
+        tempPost.likeFromId.map((data,index)=>{
+            tempPost.likeFromId[index]=data._delegate._key.path.segments[6]
+        })
+        tempPost.creator = tempPost.creator._delegate._key.path.segments[6]
+        let tempImages = []
+        tempPost.images.map((data,index)=>{
+            //console.log({url:data});
+            tempImages.push({id:tempImages.length,url:data})
+        })
+        setImgs({data:tempImages})
+        //console.log("tempPost",tempPost.images);
+        //console.log("success", tempPost.images);
+        UserModel.getCreatorByDocID(tempPost.creator,getCreatorSuccess,unsuccess)
+        setPost({...tempPost,id:doc.id})
         setLoading(false)
 
     }
+    
 
     const renderItem = ( item, index ) => {
         return (
@@ -51,24 +81,93 @@ export const Details = ({ route}) => {
             </View>
         )
     }
+    const renderImage = ({ item, index }) => {
+        return(
+            <View key={index} style={{flex:1}}>
+                <Text>Test</Text>
+                <Image
+                    style={{ width: 200, height: 150, resizeMode: 'cover', borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
+                    source={{ uri: item.url}}
+                ></Image>
+            </View>
+        )
+    }
+
+    const getUserSuccess=(doc)=>{
+        let dataUser = doc.data()
+        let likedPosts=[]
+        // let checkLikePost = dataUser.likedPosts.find((data)=>{data._delegate._key.path.segments[6] === postId })
+        // console.log("postId",postId);
+        // if(checkLikePost !== undefined){
+        //     likedPosts.push(postId)
+        // }
+        // dataUser.likedPosts.map((data)=>{
+        //     console.log(data._delegate._key.path.segments[6]);
+        // })
+        dataUser.likedPosts = likedPosts
+        //console.log(dataUser);
+        setProfile({...dataUser,id:doc.id})
+        //setLoading2(false)
+    }
+    const toCreatorProfile=(docIdUser)=>{
+        navigation.navigate({
+            name:"CreatorProfile",
+            params:docIdUser
+        })
+    }
 
     useEffect(()=>{
         PostModel.getPostById(postId,success,unsuccess)
+        const emailCurrentUser=AuthModel.getCurrentUser().email
+        UserModel.getUserByEamil(emailCurrentUser,getUserSuccess,unsuccess)
     },[])
     if(loading){
         return <Loading/>
     }
+    console.log(imgs.data)
     return (
         <View style={{ flex: 1, backgroundColor: myColor.primary }}>
+            <Button title="test" onPress={()=>setModalVisible(true)}></Button>
+            <Modal
+                    visible={modalVisible}
+                    transparent={true}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                    }}
+                >
+                    <ImageViewer imageUrls={imgs.data} index={0} />
+                </Modal>
             <ScrollView style={{flex:1}}>
                 <View style={{flex:1,paddingHorizontal:0}}>
-                    <View>
+                    {/* <View>
                     {tmpData.map((data,index)=>{
                         return(
                             renderItem(data,index)
                         )
                     })}
-                    </View>
+                    </View> */}
+                    <Card 
+                        img={post.images.length===0?"":post.images[0]}  
+                        title={post.title}  
+                        creator={creator?.fristName+ " " +creator?.lastName}
+                        creatorId={creator?.docId}
+                        imgCreator={creator?.profileImg} 
+                        like={post.likeFromId.length} 
+                        // onLike={onLike}
+                        docIdUser={profile.id}
+                        docIdPost={post.id}
+                        userLike={post.likeFromId.find((data)=>data === profile.id)!==undefined}
+                        toCreatorProfile={toCreatorProfile}
+                    />
+                    {imgs.data.map((data)=>{
+                        console.log("data",data);
+                        return(
+                            <Image 
+                                source={{uri:data.url}}
+                                style={{width:100,height:100}}
+                            ></Image>
+                        )
+                    })}
                     <View style={{flex:1,
                         backgroundColor:myColor.neutral4,
                         borderTopStartRadius:20,
@@ -77,16 +176,27 @@ export const Details = ({ route}) => {
                         paddingHorizontal:10,
                         paddingTop:10
                     }}>
-                        <Text style={[myFont.h7,{}]}>Description</Text>
+                        <Text style={[myFont.h7,{}]}>{post.title}</Text>
+
+                        <FlatList
+                            data={imgs.data}
+                            renderItem={renderImage}
+                            keyExtractor={(item) => item.id}
+                            horizontal={true}
+                            // ItemSeparatorComponent={() => (<Divider />)}
+                            // ListEmptyComponent={headleEmpty}
+                        />
+
                         {tmpData.map((data,index)=>{
                             return(
                                 renderItem(data,index)
                             )
                         })}
                         <ShowText
-                            text="Description"
+                            text={post.description}
                             pStyle={myFont.h9}
                         />
+
                         <View style={{flex:1,
                             backgroundColor:myColor.neutral3,
                             borderRadius:10,
@@ -96,7 +206,7 @@ export const Details = ({ route}) => {
                         }}>
                         <Text style={[myFont.h7,{}]}>Link Download</Text>  
                             <ShowText
-                                text="Description"
+                                text={post.link}
                                 pStyle={myFont.h9}
                                 styles={{marginVertical:5}}
                             />
