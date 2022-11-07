@@ -9,4 +9,5 @@ export const myColor={
     neutral5:"#D9D9D9",
     success:"#00798C",
     error:"#D1495B",
+    like:"#FF528F",
 }

@@ -47,6 +47,7 @@ const tmpData = [
 ]
 
 export const Profile = ({ navigation,route }) => {
+    const routeName = route.name
     const [profile, setProfile] = useState()
     const [loading, setLoading] = useState(true)
     const [post, setPost] = useState([])
@@ -169,8 +170,8 @@ export const Profile = ({ navigation,route }) => {
     }
 
     useEffect(() => {
-        console.log(route);
-        if(route.name === "CreatorProfile"){
+        //console.log(route);
+        if(routeName === "CreatorProfile"){
             UserModel.getUserByDocID(route.params,success,unsuccess)
             console.log("test");
         }else{
@@ -211,38 +212,55 @@ export const Profile = ({ navigation,route }) => {
                             source={{ uri: profile.profileImg }}
                         ></Image>
                         <View style={{ alignItems: "flex-end", height: 70, padding: 10 }}>
-                            <TouchableOpacity style={{
-                                width: 100,
-                                height: 30,
-                                backgroundColor: myColor.primary,
-                                // padding:10,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                borderRadius: 40,
+                            
+                            {routeName==="Profile"?
+                                <>
+                                <TouchableOpacity style={{
+                                    width: 100,
+                                    height: 30,
+                                    backgroundColor: myColor.primary,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: 40,
 
-                            }}
-                                onPress={() => navigation.navigate({
-                                    name: 'EditProfile',
-                                })}
-                            >
-                                <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>Edit</Text>
+                                }}
+                                    onPress={() => navigation.navigate({
+                                        name: 'EditProfile',
+                                    })}
+                                >
+                                    <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>Edit</Text>
 
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{
-                                width: 100,
-                                height: 30,
-                                backgroundColor: myColor.error,
-                                // padding:10,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                borderRadius: 40,
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{
+                                    width: 100,
+                                    height: 30,
+                                    backgroundColor: myColor.error,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: 40,
+                                    }}
+                                    onPress={() => onSignoutPress()}
+                                >
+                                    <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>OUT</Text>
+                                </TouchableOpacity>
+                                </>
+                                :
+                                <>
+                                <TouchableOpacity style={{
+                                    width: 100,
+                                    height: 30,
+                                    backgroundColor: myColor.success,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    borderRadius: 40,
+                                    }}
+                                    // onPress={() => onSignoutPress()}
+                                >
+                                    <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>Follower</Text>
+                                </TouchableOpacity>
+                                </>
+                            }
 
-                            }}
-                                onPress={() => onSignoutPress()}
-                            >
-                                <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>OUT</Text>
-
-                            </TouchableOpacity>
                         </View>
                         <View style={{
                             flexDirection: "row",

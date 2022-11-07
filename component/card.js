@@ -35,7 +35,8 @@ export const Card = (props,{navigation}) => {
                         <View style={{flex:1}}>
                             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                 <Text>{props.title}</Text>
-                                <TouchableOpacity
+
+                                {props.onLike?<TouchableOpacity
                                     onPress={()=>props.onLike(props.docIdPost,props.docIdUser,!props.userLike)}
                                 >
                                     {props.userLike?
@@ -44,6 +45,13 @@ export const Card = (props,{navigation}) => {
                                         <Feather name="heart" size={24} color="black" style={{marginRight:5}} />
                                     }
                                 </TouchableOpacity>
+                                :
+                                    props.userLike?
+                                        <FontAwesome name="heart" size={24} color={myColor.error} style={{marginRight:5}}/>
+                                    :
+                                        <Feather name="heart" size={24} color="black" style={{marginRight:5}} />
+                                }
+
                             </View>
                             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                 <Text>by:{props.creator}</Text>
