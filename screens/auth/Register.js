@@ -70,7 +70,7 @@ export const Register = ({ navigation }) => {
     }
     return (
         <SafeAreaView style={{flex:1,paddingHorizontal:10,backgroundColor:myColor.primary}}>
-            <ScrollView style={{flex:1}}>
+            <ScrollView style={{flex:1}} showsVerticalScrollIndicator={false}>
             <View style={{ flex: 1, 
                 justifyContent: "center", 
                 alignItems: "center",

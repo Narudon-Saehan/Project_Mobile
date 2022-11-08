@@ -19,11 +19,38 @@ export const Profile = ({ navigation,route }) => {
     const [loading, setLoading] = useState(true)
     const [loading2, setLoading2] = useState(false)
     const [post, setPost] = useState([])
+    const [following, setFollowing] = useState({data:[]})
+
     const [pageBar,setPageBar] = useState("Post")
     const [pageFollowing,setPageFollowing] = useState(false)
     const [pageFollower,setPageFollower] = useState(false)
     const unsuccess = (msg) => {
         console.log(msg);
+    }
+    // const unsuccess = (msg) => {
+    //     console.log(msg);
+    // }
+    const getFollowingSuccess = (doc) => {
+        // //console.log("getFollowingSuccess",following.data);
+        // if(following.data.find((data)=>data.docId === doc.id) !== undefined){
+        //     if(profile.following.find((data)=>data === docIdUserLogin)===undefined){
+        //         let newFollowing = following.data
+        //         let index = newFollowing.findIndex((data)=>data.docId === doc.id)
+        //         newFollowing[index].splice(index, 1)
+        //         setFollowing({data:newFollowing})
+        //     }
+        // }
+        // else 
+        if(following.data.find((data)=>data.docId === doc.id) === undefined){
+            const {fristName,lastName,profileImg} = doc.data()
+            let follower = []
+            let newFollowing = following.data
+            doc.data().following.map((data)=>{
+                follower.push(data._delegate._key.path.segments[6])
+            })
+            newFollowing.push({docId:doc.id,fristName,lastName,profileImg,following:follower})
+            setFollowing({data:newFollowing})
+        }
     }
     const getPostSuccess = (posts) => {
         //console.log(posts);
@@ -54,18 +81,29 @@ export const Profile = ({ navigation,route }) => {
     //     setLoading2(false)
     // }
     const success = (doc) => {
-        //console.log("success",doc.id);
+        //console.log("success",doc.data().following);
         let tempFollowing = []
         doc.data().following.map((data)=>{
-            tempFollowing.push(data._delegate._key.path.segments[6])
+            tempFollowing.push({docId:data._delegate._key.path.segments[6],fristName:"",lastName:"",profileImg:"#",following:[]})
         })
-        if(tempFollowing.find((data)=>data === docIdUserLogin)!== undefined)
+        if(tempFollowing.find((data)=>data.docId === docIdUserLogin)!== undefined)
             setCheckFollower(true)
         else
             setCheckFollower(false)
+        
         PostModel.getAllPostByCreator(doc.id, getPostSuccess, unsuccess)
-        setProfile({...doc.data(),docId:doc.id})
+        //setFollowing({data:[]})
+        getDataFollowing(tempFollowing)
+        setProfile({...doc.data(),docId:doc.id,following:tempFollowing})
         setLoading(false)
+    }
+    const getDataFollowing = (tempFollowing)=>{
+        console.log(tempFollowing);
+        tempFollowing.map((data)=>{
+            if(following.data.find((data)=>data.docId === data) === undefined)
+                UserModel.getUserByDocID2(data.docId,getFollowingSuccess,unsuccess)
+            console.log(data.docId);
+        })
     }
     const toCreatorProfile=(docIdUser)=>{
         //console.log(docIdUser);
@@ -125,7 +163,26 @@ export const Profile = ({ navigation,route }) => {
         }else if(pageBar === "Following"){
             return(
                 <>
-                    <FollowCard
+                    {profile.following.map((data,index)=>{
+                        //console.log("tempProfile",data);
+                        let tempProfile = data
+                        if(following.data.find((item) =>item.docId === data.docId ) !== undefined){
+                            tempProfile = following.data.find((item) =>item.docId === data.docId )
+                        }
+                        console.log("tempProfile",tempProfile);
+                        console.log(docIdUserLogin);
+                        return(
+                            <FollowCard
+                                key={index}
+                                nameText={tempProfile.fristName+" "+tempProfile.lastName}
+                                //text={(tempProfile.docId === docIdUserLogin)?"ME":(tempProfile.following.find((data)=>data === docIdUserLogin) === undefined)?"not follower":"follower"}
+                                //text={"temp"}
+                                color={myColor.primary}
+                                pStyle={myFont.h10}
+                            />
+                        )
+                    })}
+                    {/* <FollowCard
                         nameText="Narudon Saehan"
                         text="Follower"
                         color={myColor.primary}
@@ -138,7 +195,7 @@ export const Profile = ({ navigation,route }) => {
                         TborderColor={myColor.primary}
                         TborderWidth={1}
                         pStyle={myFont.h10}
-                    />
+                    /> */}
                 </>
                 )
         }else if(pageBar === "Follower"){
@@ -299,7 +356,7 @@ export const Profile = ({ navigation,route }) => {
                                 <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}
                                                     onPress={()=>{setPageBar("Following")}}
                                 >
-                                    <Text style={[myFont.h8, {}]}>1023</Text>
+                                    <Text style={[myFont.h8, {}]}>{profile.following.length}</Text>
                                     <Text style={[myFont.h8, {}]}>Following</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}

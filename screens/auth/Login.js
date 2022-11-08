@@ -9,6 +9,7 @@ import * as AuthModel from "../../firebase/authModel"
 import * as UserModel from "../../firebase/userModel"
 
 import { myColor } from "../../component/myColor";
+import { myFont } from "../../component/myFont";
 import KeyboardLockView from "../../component/KeyboardLockView.js";
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { AlertMessage } from "../../component/alertMessage";
@@ -81,98 +82,99 @@ export const Login = ({ navigation }) => {
     }
     return (
         <SafeAreaView style={{ flex: 1, height: "100%", justifyContent: "center", alignItems: "center", backgroundColor: myColor.primary }}>
-            {/* <ScrollView style={{flex:1,borderWidth:5,width:"100%",height:"100%"}}>
-            <View style={{flex:1,justifyContent: "center", alignItems: "center"}}> */}
-            <Image style={{ width: 150, height: 150, resizeMode: 'cover', }}
-                source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/project-mobile-ea735.appspot.com/o/profile_image%2FBooks-illustration-on-transparent-background-PNG.png?alt=media&token=f9061344-6bbc-4459-8ca2-19ff0a1767c5' }} />
-            <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: "mali", fontSize: 50, width: "100%", justifyContent: "center", color: myColor.accent }}>MY APP</Text>
-            </View>
-            <View style={{ flex: 2, width: "100%", justifyContent: "center", alignItems: "center" }}>
-                <TextBox
-                    text="Email"
-                    setTextInput={{
-                        value: email,
-                        onChangeText: (text) => setEmail(text),
-                    }}
-                />
-                <TextBox
-                    text="Password"
-                    setTextInput={{
-                        value: password,
-                        onChangeText: (text) => setPassword(text),
-                    }}
-                />
-                <View style={{flexDirection:"row",width:"100%",justifyContent:"space-around"}}>
-                    <TouchableOpacity
-                        style={{
-                            padding:10,
-                            marginBottom: 10,
-                            borderRadius:10,
-                            backgroundColor:myColor.accent
-                        }}
-                        onPress={() => [setEmail("narudon080144@gmail.com"),setPassword("111111")]}
-                    > 
-                    <Text>Don</Text>
-                    </TouchableOpacity>
+            <ScrollView style={{flex:1,width:"100%",height:"100%"}}>
+                <View style={{flex:1,justifyContent: "center", alignItems: "center",paddingHorizontal:10}}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={{ fontFamily: "mali", fontSize: 50, width: "100%", justifyContent: "center", color: myColor.accent }}>MY APP</Text>
+                    </View>
+                    <Image style={{ width: 200, height: 150, }}
+                        source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/project-mobile-ea735.appspot.com/o/profile_image%2FBooks-illustration-on-transparent-background-PNG.png?alt=media&token=f9061344-6bbc-4459-8ca2-19ff0a1767c5' }} />
+                    <View style={{ flex: 2, width: "100%", justifyContent: "center", alignItems: "center" }}>
+                        <TextBox
+                            text="Email"
+                            setTextInput={{
+                                value: email,
+                                onChangeText: (text) => setEmail(text),
+                            }}
+                        />
+                        <TextBox
+                            text="Password"
+                            setTextInput={{
+                                value: password,
+                                onChangeText: (text) => setPassword(text),
+                            }}
+                        />
+                        <View style={{flexDirection:"row",width:"100%",justifyContent:"space-around"}}>
+                            <TouchableOpacity
+                                style={{
+                                    padding:10,
+                                    marginBottom: 10,
+                                    borderRadius:10,
+                                    backgroundColor:myColor.accent
+                                }}
+                                onPress={() => [setEmail("narudon080144@gmail.com"),setPassword("111111")]}
+                            > 
+                            <Text>Don</Text>
+                            </TouchableOpacity>
 
-                    <TouchableOpacity
-                        style={{
-                            padding:10,
-                            marginBottom: 10,
-                            borderRadius:10,
-                            backgroundColor:myColor.accent
-                        }}
-                        onPress={() =>  [setEmail("sapol.m@ku.th"),setPassword("12345678")]}
-                    > 
-                    <Text>P</Text>
-                    </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{
+                                    padding:10,
+                                    marginBottom: 10,
+                                    borderRadius:10,
+                                    backgroundColor:myColor.accent
+                                }}
+                                onPress={() =>  [setEmail("sapol.m@ku.th"),setPassword("12345678")]}
+                            > 
+                            <Text>P</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <TouchableOpacity
+                            style={{
+                                width: "80%",
+                                justifyContent: "flex-end",
+                                alignItems: "flex-end",
+                                marginBottom: 10,
+                                color: myColor.error,
+
+                            }}
+                            onPress={() => toForgotPassword()}
+                        >
+                            <Text style={{textDecorationLine:'underline',
+                                color:myColor.neutral2,fontSize:14,
+                                }}>Forgot Password</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{
+                                backgroundColor: myColor.accent,
+                                borderRadius: 10,
+                                padding: 10,
+                                width: "80%",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                marginBottom: 10,
+                            }}
+                            onPress={() => onLogin()}
+                        >
+                            <Text style={[myFont.h9,{fontWeight:'bold'}]}>LOGIN</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={{
+                                backgroundColor: myColor.accent,
+                                borderRadius: 10,
+                                padding: 10,
+                                width: "80%",
+                                justifyContent: "center",
+                                alignItems: "center"
+                            }}
+                            onPress={() => toRegister()}
+                        >
+                            <Text style={[myFont.h9,{fontWeight:'bold'}]}>REGISTER</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-                <TouchableOpacity
-                    style={{
-                        width: "80%",
-                        justifyContent: "flex-end",
-                        alignItems: "flex-end",
-                        marginBottom: 10,
-                        color: myColor.error,
-                    }}
-                    onPress={() => toForgotPassword()}
-                >
-
-
-                    <Text>Forgot Password</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={{
-                        backgroundColor: myColor.accent,
-                        borderRadius: 10,
-                        padding: 10,
-                        width: "80%",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        marginBottom: 10,
-                    }}
-                    onPress={() => onLogin()}
-                >
-                    <Text>LOGIN</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={{
-                        backgroundColor: myColor.accent,
-                        borderRadius: 10,
-                        padding: 10,
-                        width: "80%",
-                        justifyContent: "center",
-                        alignItems: "center"
-                    }}
-                    onPress={() => toRegister()}
-                >
-                    <Text>REGISTER</Text>
-                </TouchableOpacity>
-            </View>
-            {/* </View>
-            </ScrollView> */}
+            </ScrollView> 
         </SafeAreaView>
     )
 }

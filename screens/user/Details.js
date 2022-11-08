@@ -163,6 +163,7 @@ export const Details = ({ route, navigation }) => {
                     })}
                     </View> */}
           <Card
+            mainStyle={{marginTop:3}}
             img={post.images.length === 0 ? "" : post.images[0]}
             title={post.title}
             creator={creator?.fristName + " " + creator?.lastName}
@@ -187,8 +188,15 @@ export const Details = ({ route, navigation }) => {
             }}
             >
                 <CreateButton
-                    text="Like Post"
-                    color={myColor.like}
+                    text={
+                      post.likeFromId.find((data) => data === docIdUserLogin) === undefined?"Like post":"Unlike post"
+                    }
+                    color={
+                      post.likeFromId.find((data) => data === docIdUserLogin) === undefined?myColor.like:myColor.neutral
+                    }
+                    styles={
+                      {borderWidth:2,borderColor:myColor.like}
+                    }
                     pStyle={myFont.h8}
                     textStyles={{fontWeight:'bold'}}
                     funOnPress={()=>onLike()}

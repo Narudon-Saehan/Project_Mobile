@@ -66,6 +66,21 @@ export const getUserByDocID =(docID,success,unsuccess)=>{
     // })
 }
 
+export const getUserByDocID2 =(docID,success,unsuccess)=>{
+    userColl.doc(docID).get()
+    .then((doc)=>{
+        if(doc.exists){
+            success(doc)
+        }else{
+            unsuccess("User not found")
+        }
+    })
+    .catch((err)=>{
+        unsuccess(err)
+    })
+}
+
+
 export const getCreatorByDocID =(docID,success,unsuccess)=>{
     userColl.doc(docID)
     .onSnapshot((doc) => {
