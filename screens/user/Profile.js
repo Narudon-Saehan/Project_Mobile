@@ -198,6 +198,9 @@ export const Profile = ({ navigation, route }) => {
 
     useEffect(() => {
         if (routeName === "CreatorProfile") {
+            setPageBar("Post")
+            setLoading(true)
+            setLoading2(true)
             UserModel.getUserByDocID(route.params, success, unsuccess)
             UserModel.getFollowingByDocID(route.params, getFollowingSuccess2, unsuccess)
         } else {
