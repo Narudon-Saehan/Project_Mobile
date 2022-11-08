@@ -167,13 +167,13 @@ export const getAllPostByTitle =(search,success,unsuccess)=>{
             let post
             querySnapshot.forEach((doc) => {
                 post = doc.data()
-                post.creator = post.creator._delegate._key.path.segments[6];
-                post.likeFromId.map((data,index)=>{
-                    post.likeFromId[index] = data._delegate._key.path.segments[6]
-                })
+                //post.creator = post.creator._delegate._key.path.segments[6];
+                // post.likeFromId.map((data,index)=>{
+                //     post.likeFromId[index] = data._delegate._key.path.segments[6]
+                // })
                 posts.push({...post,id:doc.id})
             });
-            posts=posts.filter((data)=>data.title.search(search)!==-1)
+            posts=posts.filter((data)=>data.title.toLowerCase().search(search.toLowerCase())!==-1)
             success(posts)
     })
     .catch((err)=>{

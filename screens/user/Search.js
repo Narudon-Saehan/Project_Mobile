@@ -22,11 +22,37 @@ export const Search=()=>{
     const unsuccess=(msg)=>{
         console.log(msg);
     }
-    const getPostSuccess=(posts)=>{
-        console.log(posts);
+    const getCreatorSuccess=(doc)=>{
+        let indexCreator = profileCreator.data.findIndex((data)=>data.docId === doc.id)
+        let newProfileCreator = profileCreator.data
+        newProfileCreator[indexCreator].fristName = doc.data().fristName
+        newProfileCreator[indexCreator].lastName = doc.data().lastName
+        newProfileCreator[indexCreator].profileImg = doc.data().profileImg
+        setProfileCreator({data:newProfileCreator})
+    }
+    const getPostSuccess=(dataPost)=>{
+        console.log(dataPost);
+        let newPost =  dataPost;
         let newProfileCreator = profileCreator.data;
         let checkNewCreator = false;
-        setPosts({data:posts})
+        dataPost.map((data,index)=>{
+            newPost[index] = {...newPost[index],creator:data.creator._delegate._key.path.segments[6]}
+            let likeFromId =[]
+            data.likeFromId.map((item)=>{
+                likeFromId.push(item._delegate._key.path.segments[6])
+            })
+            newPost[index].likeFromId = likeFromId
+            if (newProfileCreator.find((item)=>item.docId === data.creator._delegate._key.path.segments[6]) === undefined){
+                checkNewCreator = true;
+                newProfileCreator.push({docId:data.creator._delegate._key.path.segments[6],fristName:"",lastName:"",profileImg:"#",get:false})
+            }
+        })
+
+        setPosts({data:newPost})
+        if(checkNewCreator) {
+            setProfileCreator({data:newProfileCreator})
+            getNewCreator(newProfileCreator)
+        }
         //setLoading(false)
     }
     const getProfileSuccess=(doc)=>{
@@ -34,9 +60,16 @@ export const Search=()=>{
         setProfile({...doc.data(),docId:doc.id})
         setLoading(false)
     }
+    const getNewCreator=(newProfileCreator)=>{
+        newProfileCreator.map((data)=>{
+            if(data.fristName===""){
+                UserModel.getCreatorByDocID(data.docId,getCreatorSuccess,unsuccess)
+            }
+        })
+    }
     const renderItem = ({ item, index }) => {
         const checkUserLike = item.likeFromId.find(data => data === profile.id) !== undefined
-        //let creator = profileCreator.data.find(data => data.docId === item.creator)
+        let creator = profileCreator.data.find(data => data.docId === item.creator)
         return (
             <TouchableOpacity 
                 key={index}
@@ -49,9 +82,9 @@ export const Search=()=>{
                     key={index} 
                     img={item.images.length===0?"":item.images[0]}  
                     title={item.title}  
-                    creator={"creator.fristName"+ " " +"creator.lastName"}
-                    creatorId={"creator.docId"}
-                    imgCreator={"creator.profileImg" } 
+                    creator={creator.fristName+ " " +creator.lastName}
+                    creatorId={creator.docId}
+                    imgCreator={creator.profileImg} 
                     like={item.likeFromId.length} 
                     userLike={checkUserLike}
                     toCreatorProfile={toCreatorProfile}
@@ -99,15 +132,17 @@ export const Search=()=>{
                     textStyles={{color:myColor.neutral2,fontWeight:'bold'}}
                     funOnPress={() => toSearch()}
                 />
-            <View style={{width:"100%",backgroundColor:myColor.neutral4,borderRadius:10,paddingHorizontal:10,paddingVertical:10}}>
+            {/* <View style={{width:"100%",backgroundColor:myColor.neutral4,borderRadius:10,paddingHorizontal:10,paddingVertical:10}}>
             <Text>HHH</Text><Text>HHH</Text><Text>HHH</Text><Text>HHH</Text><Text>HHH</Text>
-            </View>
+            </View> */}
+            <View style={{flex:1,width:"100%"}}>
             <FlatList
                 data={posts.data}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
                 >
             </FlatList>
+            </View>
         </View>
     )
 }
