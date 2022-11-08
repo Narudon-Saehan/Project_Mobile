@@ -9,6 +9,8 @@ import {
   FlatList,
   Dimensions,
   TouchableOpacity,
+  Alert,
+  Linking ,
 } from "react-native";
 
 import * as UserModel from "../../firebase/userModel";
@@ -24,6 +26,9 @@ import { TextBox, CreateButton, ShowText } from "../../component/forms";
 import { Card } from "../../component/card";
 
 import { useSelector } from 'react-redux'
+
+import * as OpenAnything from "react-native-openanything";
+
 const tmpData = [
   {
     id: 0,
@@ -46,16 +51,11 @@ export const Details = ({ route, navigation }) => {
   const [imgs, setImgs] = useState({ data: [] });
   const [loading, setLoading] = useState(true);
   const unsuccess = (err) => {
-    console.log(err);
   };
   const getCreatorSuccess = (doc) => {
-    //console.log("getCreatorSuccess",doc.data());
     setCreator({ ...doc.data(), docId: doc.id });
-    //console.log("getCreatorSuccess",post.images);
-    //setModalVisible(true)
   };
   const success = (doc) => {
-    //console.log(doc.data());
     let tempPost = doc.data();
     tempPost.likeFromId.map((data, index) => {
       tempPost.likeFromId[index] = data._delegate._key.path.segments[6];
@@ -63,12 +63,9 @@ export const Details = ({ route, navigation }) => {
     tempPost.creator = tempPost.creator._delegate._key.path.segments[6];
     let tempImages = [];
     tempPost.images.map((data, index) => {
-      //console.log({url:data});
       tempImages.push({ id: tempImages.length, url: data });
     });
     setImgs({ data: tempImages });
-    //console.log("tempPost",tempPost.images);
-    //console.log("success", tempPost.images);
     UserModel.getCreatorByDocID(tempPost.creator, getCreatorSuccess, unsuccess);
     setPost({ ...tempPost, id: doc.id });
     setLoading(false);
@@ -79,12 +76,9 @@ export const Details = ({ route, navigation }) => {
       newLikeFromId.push(docIdUserLogin)
     else
       newLikeFromId = newLikeFromId.filter((data)=>data!==docIdUserLogin)
-    //newPost.title = "test"
-    //console.log(newPost);
     setPost({...post,likeFromId:newLikeFromId})
   };
   const onLike=()=>{
-    //UserModel.updateLikedPosts(docIdUser,docIdPost,likeAndUnlike,unsuccess,unsuccess)
     const checkLikePost = post.likeFromId.find((data)=>data === docIdUserLogin)!==undefined
     PostModel.updateLikeFromIdPost(postId,docIdUserLogin,!checkLikePost,likeSuccess,unsuccess)
   }
@@ -114,18 +108,8 @@ export const Details = ({ route, navigation }) => {
   const getUserSuccess = (doc) => {
     let dataUser = doc.data();
     let likedPosts = [];
-    // let checkLikePost = dataUser.likedPosts.find((data)=>{data._delegate._key.path.segments[6] === postId })
-    // console.log("postId",postId);
-    // if(checkLikePost !== undefined){
-    //     likedPosts.push(postId)
-    // }
-    // dataUser.likedPosts.map((data)=>{
-    //     console.log(data._delegate._key.path.segments[6]);
-    // })
     dataUser.likedPosts = likedPosts;
-    //console.log(dataUser);
     setProfile({ ...dataUser, id: doc.id });
-    //setLoading2(false)
   };
   const toCreatorProfile = (docIdUser) => {
     navigation.navigate({
@@ -141,7 +125,6 @@ export const Details = ({ route, navigation }) => {
   if (loading) {
     return <Loading />;
   }
-  //console.log(imgs.data)
   return (
     <View style={{ flex: 1, backgroundColor: myColor.primary }}>
       <Modal
@@ -155,13 +138,6 @@ export const Details = ({ route, navigation }) => {
       </Modal>
       <ScrollView style={{ flex: 1 }}>
         <View style={{ flex: 1, paddingHorizontal: 0 }}>
-          {/* <View>
-                    {tmpData.map((data,index)=>{
-                        return(
-                            renderItem(data,index)
-                        )
-                    })}
-                    </View> */}
           <Card
             mainStyle={{marginTop:3}}
             img={post.images.length === 0 ? "" : post.images[0]}
@@ -200,16 +176,15 @@ export const Details = ({ route, navigation }) => {
                     pStyle={myFont.h8}
                     textStyles={{fontWeight:'bold'}}
                     funOnPress={()=>onLike()}
-                    //onLike
                 />
             </View>
-           </View>
+          </View>
           <View
             style={{
               flex: 1,
               backgroundColor: myColor.neutral4,
               borderTopStartRadius: 20,
-              borderTopEndRadius: 20,
+              borderTopEndRadius: 20,borderBottomEndRadius:5,borderBottomStartRadius:5,
               marginHorizontal: 20,
               paddingHorizontal: 10,
               paddingTop: 10,
@@ -222,8 +197,6 @@ export const Details = ({ route, navigation }) => {
               renderItem={renderImage}
               keyExtractor={(item) => item.id}
               horizontal={true}
-              // ItemSeparatorComponent={() => (<Divider />)}
-              // ListEmptyComponent={headleEmpty}
             />
             <ShowText text={post.description} pStyle={myFont.h9} />
 
@@ -237,65 +210,46 @@ export const Details = ({ route, navigation }) => {
                 marginBottom: 10,
               }}
             >
-              <Text style={[myFont.h7, {}]}>Link Download</Text>
-              <ShowText
-                text={post.link}
-                pStyle={myFont.h9}
-                styles={{ marginVertical: 5 }}
-              />
-              <Text style={[myFont.h7, {}]}>PDF</Text>
-              <ShowText
-                text="Description"
-                pStyle={myFont.h9}
-                styles={{ marginVertical: 5 }}
-              />
-            </View>
+              {post.link!==""?
+              <>
+                <Text style={[myFont.h7, {}]}>Link Download</Text>
+                <TouchableOpacity
+                  onPress={()=>OpenAnything.Web(post.link).catch(err => alert("Can't open a link due Incorrect link"))}
+                >
+                  <ShowText
+                    text={post.link}
+                    pStyle={myFont.h9}
+                    styles={{ marginVertical: 5 }}
+                    textStyles={{fontStyle:'italic',textDecorationLine:'underline'}}
+                  />
+                </TouchableOpacity>
+              </>:
+              <></>}
 
-            {/* <View style={{flex:1,
-                                        backgroundColor:myColor.neutral,
-                                        marginHorizontal:0,
-                                        borderRadius:10,
-                                        paddingHorizontal:10,
-                                        marginHorizontal:20,
-                                        paddingVertical:10,
-                                        marginBottom:10
-                        }}>
-                            <Text style={[myFont.h9,{}]}>Description</Text>
-                        </View> */}
+              {post.pdf!==""?
+                <>
+                  <Text style={[myFont.h7, {}]}>PDF</Text>
+                  <View style={{flex:1}}>
+                    <CreateButton
+                        text="Download PDF"
+                        color={
+                          myColor.primary
+                        }
+                        styles={
+                          {borderWidth:2,borderColor:myColor.primary,alignItems:"center",width:110,marginLeft:0}
+                        }
+                        pStyle={myFont.h10}
+                        textStyles={{fontWeight:'bold',color:myColor.neutral}}
+                        funOnPress={()=>OpenAnything.Pdf(post.pdf).catch(err => alert("Can't open a PDF"))}
+                    />
+                  </View>
+                </>
+              :
+              <></>}
+            </View>
           </View>
         </View>
       </ScrollView>
-      {/* <ScrollView style={{flex:1}}> */}
-      {/* {tmpData.map((data,index)=>{
-                    return(
-                        renderItem(data,index)
-                    )
-                })} */}
-      {/* <View style={{flex:1,paddingHorizontal:10}}>
-                <View style={{flex:1,backgroundColor:myColor.neutral4}}>
-                </View>
-            </View> */}
-      {/* </ScrollView> */}
     </View>
-    // <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-    //     <Text>{post.title}</Text>
-    //     <Text>{post.selectId}</Text>
-    //     <Text>{post.description}</Text>
-    //     <Image
-    //         style={{width:100,height:100,resizeMode:"contain"}}
-    //         source={{uri:post.images[0]}}
-    //     ></Image>
-    // </View>
-
-    // <ScrollView style={{flex:1}}>
-    // <Text style={{...myFont.h2}}>Sample Post</Text>
-    // <Card
-    //     img={imgs.data.length===0?"":imgs.data[0].url}
-    //     title={post.title}
-    //     creator={profile.fristName + " " + profile.lastName}
-    //     imgCreator={profile.profileImg}
-    //     like={0}
-    // />
-    // </ScrollView>
   );
 };

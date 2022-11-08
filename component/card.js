@@ -77,12 +77,13 @@ export const FollowCard = (props) => {
                         marginRight:10,
                         ...props.iStyles,
                     }}
-                    source={{uri:"https://firebasestorage.googleapis.com/v0/b/project-mobile-ea735.appspot.com/o/profile_image%2Fuser.jpg?alt=media&token=f28170a0-1d7f-42aa-8c49-7207ab17feb7"}}
+                    source={{uri:props.uriProfile}}
                 />
                 <Text style={[myFont.h11,{flex:3,...props.nameTextStyles}]}>
                     {props.nameText}
                 </Text>
-                {props.checkSelfFollower===props.nameText?
+                <View style={{width:80,height:30,margin:10,}}/>
+                {/* {props.checkSelfFollower===props.nameText?
                     <View style={{width:80,height:30,margin:10,}}/>
                     :
                     <TouchableOpacity
@@ -105,7 +106,7 @@ export const FollowCard = (props) => {
                             }]}
                         >{props.text}</Text>
                     </TouchableOpacity>
-                }
+                } */}
                 {/* <TouchableOpacity
                     style={{width:80,
                         height:30,

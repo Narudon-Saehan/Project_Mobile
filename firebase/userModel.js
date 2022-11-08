@@ -11,6 +11,8 @@ export const addUser=(email,profile,profileImg,success,unsuccess)=>{
         fristName:profile.fristName,
         lastName:profile.lastName,
         profileImg:profileImg,
+        following:[],
+        likedPosts:[],
     })
     .then((docRef) => {
         //console.log("Document written with ID: ", docRef.id);
@@ -86,6 +88,57 @@ export const getCreatorByDocID =(docID,success,unsuccess)=>{
     .onSnapshot((doc) => {
         //console.log("getCreatorByDocID",doc.data());
         success(doc)
+        // querySnapshot.forEach((doc) => {
+        //     //console.log(doc.id,"=>",doc.data())
+        //     success(doc)
+        // });
+    }),(error)=>{
+        console.log(error);
+        unsuccess(error)
+    };
+}
+
+export const getFollowingByDocID =(docID,success,unsuccess)=>{
+    userColl.where("following","array-contains", DB.doc("users/"+docID))
+    .onSnapshot((querySnapshot) => {
+        let allfollower = []
+        let follower
+        querySnapshot.forEach((doc) => {
+            follower = doc.data()
+            delete follower.following;
+            allfollower.push({...follower,id:doc.id})
+            //console.log("allfollower",allfollower);
+        });
+        //console.log("allfollower",allfollower);
+        success(allfollower)
+
+        //console.log("getCreatorByDocID",doc.data());
+        //success(doc)
+        // querySnapshot.forEach((doc) => {
+        //     //console.log(doc.id,"=>",doc.data())
+        //     success(doc)
+        // });
+    }),(error)=>{
+        console.log(error);
+        unsuccess(error)
+    };
+}
+export const getFollowerByDocID =(docID,success,unsuccess)=>{
+    userColl.where("following","array-contains", DB.doc("users/"+docID))
+    .onSnapshot((querySnapshot) => {
+        let allfollower = []
+        let follower
+        querySnapshot.forEach((doc) => {
+            follower = doc.data()
+            delete follower.following;
+            allfollower.push({...follower,id:doc.id})
+            //console.log("allfollower",allfollower);
+        });
+        //console.log("allfollower",allfollower);
+        success(allfollower)
+
+        //console.log("getCreatorByDocID",doc.data());
+        //success(doc)
         // querySnapshot.forEach((doc) => {
         //     //console.log(doc.id,"=>",doc.data())
         //     success(doc)

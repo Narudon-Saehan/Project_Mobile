@@ -11,7 +11,6 @@ import { Loading } from "../Loading"
 import { myFont } from "../../component/myFont"
 import { FrameLayout } from "../../component/frame"
 export const Home = ({ navigation }) => {
-    //console.log("555");
     const [post,setPost] = useState({data:[]})
     const [profile,setProfile] = useState()
     const [docIdCreator,setDocIdCreator] = useState([])
@@ -19,17 +18,8 @@ export const Home = ({ navigation }) => {
     const [loading,setLoading] = useState(true)
     const [loading2,setLoading2] = useState(true)
     const renderItem = ({ item, index }) => {
-        //console.log("renderItem",item.id);
-       // console.log("renderItem",item.creator);
         const checkUserLike = item.likeFromId.find(data => data === profile.id) !== undefined
-        //let creator = {fristName:"",lastName:"",profileImg:"#"}
         let creator = profileCreator.data.find(data => data.docId === item.creator)
-        //console.log(findCreator);
-        // if(findCreator !== undefined)
-        //     creator = findCreator
-        //console.log(profileCreator.data.find(data => data.docId === item.creator));
-        //profileCreator.data.find(data => data.docId === item.creator)
-        //console.log("checkUserLike",checkUserLike);
         return (
             <TouchableOpacity 
                 key={index}
@@ -59,10 +49,7 @@ export const Home = ({ navigation }) => {
         })
     }
 
-    const onLike=(docIdPost,docIdUser,likeAndUnlike)=>{
-        //UserModel.updateLikedPosts(docIdUser,docIdPost,likeAndUnlike,unsuccess,unsuccess)
-        PostModel.updateLikeFromIdPost(docIdPost,docIdUser,likeAndUnlike,unsuccess,unsuccess)
-    }
+
     const unsuccess=(msg)=>{
         console.log(msg);
     }
@@ -91,25 +78,21 @@ export const Home = ({ navigation }) => {
         setLoading(false) 
     }
     const getCreatorSuccess=(doc)=>{
-        //console.log("getCreatorSuccess",profileCreator.data.findIndex((data)=>data.docId === doc.id)); 
         let indexCreator = profileCreator.data.findIndex((data)=>data.docId === doc.id)
         let newProfileCreator = profileCreator.data
         newProfileCreator[indexCreator].fristName = doc.data().fristName
         newProfileCreator[indexCreator].lastName = doc.data().lastName
         newProfileCreator[indexCreator].profileImg = doc.data().profileImg
         setProfileCreator({data:newProfileCreator})
-        //setProfileCreator({data:[...profileCreator.data,{...doc.data(),docId:doc.id}]})
     }
 
     const getUserSuccess=(doc)=>{
         let dataUser = doc.data()
         let likedPosts=[]
         dataUser.likedPosts.map((data)=>{
-            //console.log(data._delegate._key.path.segments[6]);
             likedPosts.push(data._delegate._key.path.segments[6])
         })
         dataUser.likedPosts = likedPosts
-        //console.log(dataUser);
         setProfile({...dataUser,id:doc.id})
         setLoading2(false)
     }
@@ -143,8 +126,6 @@ export const Home = ({ navigation }) => {
                         data={post.data}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.id}
-                        // ItemSeparatorComponent={() => (<Divider />)}
-                        // ListEmptyComponent={headleEmpty}
                     >
                     </FlatList>
             </FrameLayout>

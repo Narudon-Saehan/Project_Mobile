@@ -30,12 +30,14 @@ export const addPost= (dataPost,success,unsuccess)=>{
     });
 }
 
-export const updateImagesPost= (images,docIdPost,success,unsuccess)=>{
+export const updateImagesPdfPost= (images,pdf,docIdPost,success,unsuccess)=>{
     console.log("updateImagesPost",images);
+    console.log("updateImagesPost",pdf);
     // console.log(docIdPost);
     postColl.doc(docIdPost).update({
         updateDate:new Date(),
-        images
+        images,
+        pdf
     }).then(()=>{
         success("OK");
     }).catch((err)=>{
@@ -114,6 +116,69 @@ export const getAllPostByCreator =(creatorId,success,unsuccess)=>{
     }),(error)=>{
         unsuccess(error);
     };
+}
+
+export const getAllPostByFollower =(follower,success,unsuccess)=>{
+    let dbfollower = []
+    follower.map((data)=>{
+        dbfollower.push(DB.doc("users/"+data))
+    })
+    if(dbfollower.length>0){
+        postColl.where("creator","in",dbfollower).onSnapshot( (querySnapshot) => {
+            let posts = []
+            let post
+            querySnapshot.forEach((doc) => {
+                post = doc.data()
+                post.creator = post.creator._delegate._key.path.segments[6];
+                post.likeFromId.map((data,index)=>{
+                    post.likeFromId[index] = data._delegate._key.path.segments[6]
+                })
+                posts.push({...post,id:doc.id})
+            });
+            success(posts)
+        }),(error)=>{
+            unsuccess(error);
+        };
+        // .then((querySnapshot)=>{
+        //     let posts = []
+        //     let post
+        //     querySnapshot.forEach((doc) => {
+        //         post = doc.data()
+        //         post.creator = post.creator._delegate._key.path.segments[6];
+        //         post.likeFromId.map((data,index)=>{
+        //             post.likeFromId[index] = data._delegate._key.path.segments[6]
+        //         })
+        //         posts.push({...post,id:doc.id})
+        //     });
+        //     success(posts)
+        // }).catch((err)=>{
+        //     unsuccess(err)
+        // })
+    }
+    else{
+        success([])
+    }
+}
+
+export const getAllPostByTitle =(search,success,unsuccess)=>{
+    postColl.get()
+    .then((querySnapshot)=>{
+        let posts = []
+            let post
+            querySnapshot.forEach((doc) => {
+                post = doc.data()
+                post.creator = post.creator._delegate._key.path.segments[6];
+                post.likeFromId.map((data,index)=>{
+                    post.likeFromId[index] = data._delegate._key.path.segments[6]
+                })
+                posts.push({...post,id:doc.id})
+            });
+            posts=posts.filter((data)=>data.title.search(search)!==-1)
+            success(posts)
+    })
+    .catch((err)=>{
+        unsuccess(err)
+    })
 }
 
 export const getPostById =(postId,success,unsuccess)=>{

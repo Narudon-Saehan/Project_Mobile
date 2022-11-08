@@ -5,7 +5,7 @@ import { myFont } from "./myFont"
 export const TextBox = (props) => {
     return (
         <View style={{ width: "100%",paddingBottom:6,...props.mainStyle}}>
-            <View style={{ alignSelf: "flex-start",flexDirection:"row" }}>
+            <View style={{ alignSelf: "flex-start",flexDirection:"row",...props.setTextStyles }}>
                 <Text style={[props.pStyle,{...props.textStyles}]}>{props.text}</Text>
                 <Text style={{color:myColor.error}}>{(props.required && !props.setTextInput.value)?" *required":""}</Text>
             </View>
@@ -63,7 +63,7 @@ export const ShowText = (props) => {
         }}
         >
             <Text style={[props.pStyle,{
-                ...props.textStyles
+                ...props.textStyles,
             }]}
             >{props.text}</Text>
         </View>

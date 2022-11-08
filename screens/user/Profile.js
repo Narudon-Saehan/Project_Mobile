@@ -10,7 +10,7 @@ import { Feather } from '@expo/vector-icons';
 import { Card, FollowCard } from "../../component/card"
 import { useSelector } from 'react-redux'
 
-export const Profile = ({ navigation,route }) => {
+export const Profile = ({ navigation, route }) => {
     const routeName = route.name
     const docIdUserLogin = useSelector((state) => state.todos.docIdUser)
     const [profile, setProfile] = useState()
@@ -19,46 +19,38 @@ export const Profile = ({ navigation,route }) => {
     const [loading, setLoading] = useState(true)
     const [loading2, setLoading2] = useState(false)
     const [post, setPost] = useState([])
-    const [following, setFollowing] = useState({data:[]})
+    const [following, setFollowing] = useState({ data: [] })
+    const [follower, setFollower] = useState({ data: [] })
 
-    const [pageBar,setPageBar] = useState("Post")
-    const [pageFollowing,setPageFollowing] = useState(false)
-    const [pageFollower,setPageFollower] = useState(false)
+    const [pageBar, setPageBar] = useState("Post")
+    const [pageFollowing, setPageFollowing] = useState(false)
+    const [pageFollower, setPageFollower] = useState(false)
     const unsuccess = (msg) => {
-        console.log(msg);
     }
-    // const unsuccess = (msg) => {
-    //     console.log(msg);
-    // }
     const getFollowingSuccess = (doc) => {
-        // //console.log("getFollowingSuccess",following.data);
-        // if(following.data.find((data)=>data.docId === doc.id) !== undefined){
-        //     if(profile.following.find((data)=>data === docIdUserLogin)===undefined){
-        //         let newFollowing = following.data
-        //         let index = newFollowing.findIndex((data)=>data.docId === doc.id)
-        //         newFollowing[index].splice(index, 1)
-        //         setFollowing({data:newFollowing})
-        //     }
-        // }
-        // else 
-        if(following.data.find((data)=>data.docId === doc.id) === undefined){
-            const {fristName,lastName,profileImg} = doc.data()
+        if (follower.data.find((data) => data.docId === doc.id) === undefined) {
+            const { fristName, lastName, profileImg } = doc.data()
             let follower = []
-            let newFollowing = following.data
-            doc.data().following.map((data)=>{
+            let newFollowing = follower.data
+            doc.data().following.map((data) => {
                 follower.push(data._delegate._key.path.segments[6])
             })
-            newFollowing.push({docId:doc.id,fristName,lastName,profileImg,following:follower})
-            setFollowing({data:newFollowing})
+            newFollowing.push({ docId: doc.id, fristName, lastName, profileImg, following: follower })
+            console.log("getFollowingSuccess",newFollowing);
+            setFollower({ data: newFollowing })
         }
     }
+    const getFollowingSuccess2=(allfollower)=>{
+        console.log("getFollowingSuccess2",allfollower);
+        setFollowing({data:allfollower})
+    }
     const getPostSuccess = (posts) => {
-        //console.log(posts);
         let templikeAll = 0
-        let newPost =  posts;
-        posts.map((data,index)=>{
-            let likeFromId =[]
-            data.likeFromId.map((item)=>{
+        let newPost = posts;
+        posts.sort((a, b) => a.updateDate < b.updateDate);
+        posts.map((data, index) => {
+            let likeFromId = []
+            data.likeFromId.map((item) => {
                 likeFromId.push(item._delegate._key.path.segments[6])
             })
             templikeAll += likeFromId.length
@@ -67,49 +59,31 @@ export const Profile = ({ navigation,route }) => {
         setLikeAll(templikeAll)
         setPost(newPost);
     }
-    // const getProfileUserLoginSuccess = (doc) => {
-    //     let tempFollowing = []
-    //     doc.data().following.map((data)=>{
-    //         tempFollowing.push(data._delegate._key.path.segments[6])
-    //     })
-    //     if(tempFollowing.find((data)=>data === route.params)!== undefined)
-    //         setCheckFollower(true)
-    //     else
-    //         setCheckFollower(false)
-    //     //console.log("getProfileUserLoginSuccess");
-    //     //setCheckFollower({...doc.data(),docId:doc.id})
-    //     setLoading2(false)
-    // }
     const success = (doc) => {
-        //console.log("success",doc.data().following);
         let tempFollowing = []
-        doc.data().following.map((data)=>{
-            tempFollowing.push({docId:data._delegate._key.path.segments[6],fristName:"",lastName:"",profileImg:"#",following:[]})
+        doc.data().following.map((data) => {
+            tempFollowing.push({ docId: data._delegate._key.path.segments[6], fristName: "", lastName: "", profileImg: "#", following: [] })
         })
-        if(tempFollowing.find((data)=>data.docId === docIdUserLogin)!== undefined)
+        if (tempFollowing.find((data) => data.docId === docIdUserLogin) !== undefined)
             setCheckFollower(true)
         else
             setCheckFollower(false)
-        
+
         PostModel.getAllPostByCreator(doc.id, getPostSuccess, unsuccess)
-        //setFollowing({data:[]})
         getDataFollowing(tempFollowing)
-        setProfile({...doc.data(),docId:doc.id,following:tempFollowing})
+        setProfile({ ...doc.data(), docId: doc.id, following: tempFollowing })
         setLoading(false)
     }
-    const getDataFollowing = (tempFollowing)=>{
-        console.log(tempFollowing);
-        tempFollowing.map((data)=>{
-            if(following.data.find((data)=>data.docId === data) === undefined)
-                UserModel.getUserByDocID2(data.docId,getFollowingSuccess,unsuccess)
-            console.log(data.docId);
+    const getDataFollowing = (tempFollowing) => {
+        tempFollowing.map((data) => {
+            if (follower.data.find((data) => data.docId === data) === undefined)
+                UserModel.getUserByDocID2(data.docId, getFollowingSuccess, unsuccess)
         })
     }
-    const toCreatorProfile=(docIdUser)=>{
-        //console.log(docIdUser);
+    const toCreatorProfile = (docIdUser) => {
         navigation.navigate({
-            name:"CreatorProfile",
-            params:docIdUser
+            name: "CreatorProfile",
+            params: docIdUser
         })
     }
 
@@ -118,117 +92,87 @@ export const Profile = ({ navigation,route }) => {
     }
 
     const onSignoutPress = () => {
-        console.log('Logout now')
         AuthModel.signOut(signoutSuccess, unsuccess)
     }
     const onFollowingPress = () => {
-        UserModel.updateFollowing(profile.docId,docIdUserLogin,!checkFollower,unsuccess,unsuccess)
-        //AuthModel.signOut(signoutSuccess, unsuccess)
+        UserModel.updateFollowing(profile.docId, docIdUserLogin, !checkFollower, unsuccess, unsuccess)
     }
 
     const pageBarOptions = () => {
         if (pageBar === "Post") {
-            return(<>
-            {post.length!=0?
-                post.map((data, index) => {
-                    return (
-                        <TouchableOpacity
-                            key={index}
-                            onPress={()=>navigation.navigate({
-                                name:"Details",
-                                params:{postId:data.id},
-                            })} 
-                        >
-                            <Card
+            return (<>
+                {post.length != 0 ?
+                    post.map((data, index) => {
+                        return (
+                            <TouchableOpacity
                                 key={index}
-                                img={data.images.length === 0 ? "" : data.images[0]}
-                                mainStyle={{marginTop:7,marginBottom:1}}
-                                title={data.title}
-                                creator={profile.fristName + " " + profile.lastName}
-                                creatorId={profile.docId}
-                                imgCreator={profile.profileImg}
-                                like={data.likeFromId.length}
-                                userLike={data.likeFromId.find((data)=>data === docIdUserLogin)!==undefined}
-                                toCreatorProfile={toCreatorProfile}
-                            />
-                        </TouchableOpacity>
-                    )
-                })
-            :
-                <View style={{flex:1,height:250,justifyContent:"center",alignItems:"center"}}>
-                    <Text style={[myFont.h5,{fontWeight:'bold'}]}>Wanna try something to post?</Text>
-                </View>
-            }
+                                onPress={() => navigation.navigate({
+                                    name: "Details",
+                                    params: { postId: data.id },
+                                })}
+                            >
+                                <Card
+                                    key={index}
+                                    img={data.images.length === 0 ? "" : data.images[0]}
+                                    mainStyle={{ marginTop: 7, marginBottom: 1 }}
+                                    title={data.title}
+                                    creator={profile.fristName + " " + profile.lastName}
+                                    creatorId={profile.docId}
+                                    imgCreator={profile.profileImg}
+                                    like={data.likeFromId.length}
+                                    userLike={data.likeFromId.find((data) => data === docIdUserLogin) !== undefined}
+                                    toCreatorProfile={toCreatorProfile}
+                                />
+                            </TouchableOpacity>
+                        )
+                    })
+                    :
+                    <View style={{ flex: 1, height: 250, justifyContent: "center", alignItems: "center" }}>
+                        <Text style={[myFont.h5, { fontWeight: 'bold' }]}>Wanna try something to post?</Text>
+                    </View>
+                }
             </>)
-        }else if(pageBar === "Following"){
-            return(
+        } else if (pageBar === "Following") {
+            return (
                 <>
-                    {profile.following.map((data,index)=>{
-                        //console.log("tempProfile",data);
-                        let tempProfile = data
-                        if(following.data.find((item) =>item.docId === data.docId ) !== undefined){
-                            tempProfile = following.data.find((item) =>item.docId === data.docId )
-                        }
-                        console.log("tempProfile",tempProfile);
-                        console.log(docIdUserLogin);
-                        return(
+                    {following.data.map((data, index) => {
+                        return (
                             <FollowCard
                                 key={index}
-                                nameText={tempProfile.fristName+" "+tempProfile.lastName}
-                                //text={(tempProfile.docId === docIdUserLogin)?"ME":(tempProfile.following.find((data)=>data === docIdUserLogin) === undefined)?"not follower":"follower"}
-                                //text={"temp"}
+                                nameText={data.fristName + " " + data.lastName}
+                                uriProfile ={data.profileImg}
                                 color={myColor.primary}
                                 pStyle={myFont.h10}
                             />
                         )
                     })}
-                    {/* <FollowCard
-                        nameText="Narudon Saehan"
-                        text="Follower"
-                        color={myColor.primary}
-                        pStyle={myFont.h10}
-                    />
-                    <FollowCard
-                        nameText="Narudon Saehan2"  
-                        text="Following"
-                        color={myColor.neutral}
-                        TborderColor={myColor.primary}
-                        TborderWidth={1}
-                        pStyle={myFont.h10}
-                    /> */}
                 </>
-                )
-        }else if(pageBar === "Follower"){
-            return(
-            <>
-                <FollowCard
-                    checkSelfFollower="Sapol Mahawong"
-                    nameText="Narudon Saehan"
-                    text="Follower"
-                    color={myColor.primary}
-                    pStyle={myFont.h10}
-                />
-                <FollowCard
-                    checkSelfFollower="Sapol Mahawongewhggegegegergergewgggggeg33"
-                    nameText="Sapol Mahawongewhggegegegergergewgggggeg33"
-                    text="Following"
-                    color={myColor.neutral}
-                    TborderColor={myColor.primary}
-                    TborderWidth={1}
-                    pStyle={myFont.h10}
-                />
-            </>
+            )
+        } else if (pageBar === "Follower") {
+            return (
+                <>
+                    {profile.following.map((data, index) => {
+                        //console.log();
+                        console.log("follower  55",index," ",data);
+                        // return (
+                        //     <FollowCard
+                        //         key={index}
+                        //         nameText={data.fristName + " " + data.lastName}
+                        //         color={myColor.primary}
+                        //         pStyle={myFont.h10}
+                        //     />
+                        // )
+                    })}
+                </>
             )
         }
     }
 
     useEffect(() => {
-        //console.log(route);
-        if(routeName === "CreatorProfile"){
-            //setLoading2(true)
-            UserModel.getUserByDocID(route.params,success,unsuccess)
-            //UserModel.getUserByDocID(docIdUserLogin,getProfileUserLoginSuccess,unsuccess)
-        }else{
+        if (routeName === "CreatorProfile") {
+            UserModel.getUserByDocID(route.params, success, unsuccess)
+            UserModel.getFollowingByDocID(route.params, getFollowingSuccess2, unsuccess)
+        } else {
             let emailCurrentUser = AuthModel.getCurrentUser().email
             UserModel.getUserByEamil(emailCurrentUser, success, unsuccess)
         }
@@ -246,7 +190,6 @@ export const Profile = ({ navigation,route }) => {
                 <View style={{ height: 100 }}>
 
                 </View>
-                {/* <Text style={{fontSize:30,marginBottom:10}}>Profile</Text> */}
                 <View style={{ flex: 1, paddingHorizontal: 10 }}>
                     <View style={{ flex: 1, backgroundColor: myColor.neutral4 }}>
                         <Image
@@ -266,54 +209,54 @@ export const Profile = ({ navigation,route }) => {
                             source={{ uri: profile.profileImg }}
                         ></Image>
                         <View style={{ alignItems: "flex-end", height: 70, padding: 10 }}>
-                            
-                            {routeName==="Profile"?
+
+                            {routeName === "Profile" ?
                                 <>
-                                <TouchableOpacity style={{
-                                    width: 100,
-                                    height: 30,
-                                    backgroundColor: myColor.primary,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    borderRadius: 40,
-
-                                }}
-                                    onPress={() => navigation.navigate({
-                                        name: 'EditProfile',
-                                    })}
-                                >
-                                    <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>Edit</Text>
-
-                                </TouchableOpacity>
-                                <TouchableOpacity style={{
-                                    width: 100,
-                                    height: 30,
-                                    backgroundColor: myColor.error,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    borderRadius: 40,
+                                    <TouchableOpacity style={{
+                                        width: 100,
+                                        height: 30,
+                                        backgroundColor: myColor.primary,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        borderRadius: 40,
+                                        marginBottom: 4,
                                     }}
-                                    onPress={() => onSignoutPress()}
-                                >
-                                    <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>OUT</Text>
-                                </TouchableOpacity>
+                                        onPress={() => navigation.navigate({
+                                            name: 'EditProfile',
+                                        })}
+                                    >
+                                        <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>Edit</Text>
+
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={{
+                                        width: 100,
+                                        height: 30,
+                                        backgroundColor: myColor.error,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        borderRadius: 40,
+                                    }}
+                                        onPress={() => onSignoutPress()}
+                                    >
+                                        <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>Log out</Text>
+                                    </TouchableOpacity>
                                 </>
                                 :
-                                route.params !==docIdUserLogin?
-                                <TouchableOpacity style={{
-                                    width: 100,
-                                    height: 30,
-                                    backgroundColor: myColor.success,
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    borderRadius: 40,
+                                route.params !== docIdUserLogin ?
+                                    <TouchableOpacity style={{
+                                        width: 100,
+                                        height: 30,
+                                        backgroundColor: myColor.success,
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        borderRadius: 40,
                                     }}
-                                    onPress={() => onFollowingPress()}
-                                >
-                                    <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>{checkFollower?"UnFollower":"Follower"}</Text>
-                                </TouchableOpacity>
-                                :
-                                <></>
+                                        onPress={() => onFollowingPress()}
+                                    >
+                                        <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>{checkFollower ? "UnFollower" : "Follower"}</Text>
+                                    </TouchableOpacity>
+                                    :
+                                    <></>
 
                             }
 
@@ -349,19 +292,19 @@ export const Profile = ({ navigation,route }) => {
                             }}
                             >
                                 <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}
-                                    onPress={()=>{setPageBar("Post")}}>
+                                    onPress={() => { setPageBar("Post") }}>
                                     <Text style={[myFont.h8, {}]}>{post.length}</Text>
                                     <Text style={[myFont.h8, {}]}>Post</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}
-                                                    onPress={()=>{setPageBar("Following")}}
+                                    onPress={() => { setPageBar("Following") }}
                                 >
-                                    <Text style={[myFont.h8, {}]}>{profile.following.length}</Text>
+                                    <Text style={[myFont.h8, {}]}>{following.data.length}</Text>
                                     <Text style={[myFont.h8, {}]}>Following</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', width: "30%" }}
-                                    onPress={()=>{setPageBar("Follower")}}>
-                                    <Text style={[myFont.h8, {}]}>54</Text>
+                                    onPress={() => { setPageBar("Follower") }}>
+                                    <Text style={[myFont.h8, {}]}>{profile.following.length}</Text>
                                     <Text style={[myFont.h8, {}]}>Follower</Text>
                                 </TouchableOpacity>
                             </View>
@@ -373,25 +316,6 @@ export const Profile = ({ navigation,route }) => {
                         )
                     })} */}
                         {pageBarOptions()}
-                        {/* {post.length!=0?
-                            post.map((data, index) => {
-                                return (
-                                    <Card
-                                        key={index}
-                                        img={data.images.length === 0 ? "" : data.images[0]}
-                                        mainStyle={{marginTop:7,marginBottom:1}}
-                                        title={data.title}
-                                        creator={profile.fristName + " " + profile.lastName}
-                                        imgCreator={profile.profileImg}
-                                        like={data.like}
-                                    />
-                                )
-                            })
-                        :
-                            <View style={{flex:1,height:250,justifyContent:"center",alignItems:"center"}}>
-                                <Text style={[myFont.h5,{fontWeight:'bold'}]}>Wanna try something to post?</Text>
-                            </View>
-                        } */}
                     </View>
                 </View>
             </ScrollView>

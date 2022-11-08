@@ -14,6 +14,7 @@ import { AlertMessage } from "../../component/alertMessage";
 
 export const Register = ({ navigation }) => {
     const [profile, setProfile] = useState({ email: "", password: "",confirmPassword:"", fristName: "", lastName: "", profileImg:"https://firebasestorage.googleapis.com/v0/b/project-mobile-ea735.appspot.com/o/profile_image%2Fuser.jpg?alt=media&token=f28170a0-1d7f-42aa-8c49-7207ab17feb7" })
+    const [checkImg,setCheckImg] = useState(false)
     const [loading, setLoading] = useState(false)
     const changeProfile = (keyName, value) => {
         setProfile({ ...profile, [keyName]: value })
@@ -33,15 +34,14 @@ export const Register = ({ navigation }) => {
         if (pickerResult.cancelled === true) {
             return;
         }
-        changeProfile("profileImg", pickerResult.uri );
+        setCheckImg(true)
+        changeProfile("profileImg", pickerResult.uri )
     }
     const unsuccess = (msg) => {
-        console.log(msg);
         AlertMessage(msg)
         setLoading(false)
     }
     const allsuccess = (msg) => {
-        console.log(msg);
         AlertMessage("Register Success")
         setLoading(false)
         toLogin()
@@ -52,15 +52,14 @@ export const Register = ({ navigation }) => {
     }
 
     const createUserSuccess = (user) => {
-        console.log(user);
-        //StorageModel.uploadImage(pickerResult.uri)
-        //UserModel.addUser(user.email, profile, allsuccess, unsuccess)
-        StorageModel.uploadImage(profile.profileImg,user.email,uploadPhotoSuccess,unsuccess)
+        if(checkImg)
+            StorageModel.uploadImage(profile.profileImg,user.email,uploadPhotoSuccess,unsuccess)
+        else
+            uploadPhotoSuccess(user.email,profile.profileImg)
     }
 
     const onRegister = () => {
         setLoading(true)
-        console.log(profile);
         AuthModel.signUpEmailPass(profile.email, profile.password, createUserSuccess, unsuccess)
     }
     if (loading) {
@@ -162,7 +161,6 @@ export const Register = ({ navigation }) => {
                             borderRadius: 10,
                             alignItems:'center',
                             justifyContent:'center',
-                            // marginHorizontal: 10,
                         }}
                         onPress={() => toLogin()}
                     >

@@ -31,7 +31,6 @@ export const EditProfile=({navigation})=>{
     }
 
     const unsuccess=(msg)=>{
-        console.log(msg);
         setLoading(false)
     }
     const editSuccess=()=>{
@@ -54,9 +53,6 @@ export const EditProfile=({navigation})=>{
     }
     const onEditProfile=()=>{
         setLoading(true)
-        // console.log(docID);
-        // console.log(profile);
-        //UserModel.updateUserById(docID,profile,editSuccess,unsuccess)
         StorageModel.uploadImage(profile.profileImg,profile.email,uploadPhotoSuccess,unsuccess)
     }
     useEffect(()=>{
@@ -132,48 +128,5 @@ export const EditProfile=({navigation})=>{
             
         </FrameLayout>
 
-        // <View style={{flex:1,justifyContent:"center",alignItems:"center",backgroundColor:myColor.primary}}>
-        //     <Text>EditProfile</Text>
-        //     <Image 
-        //         style={{width: 150,height: 150,resizeMode: 'cover',borderRadius: 150,}}
-        //         source={{uri:profile.profileImg}}
-        //     ></Image>
-        //     <CreateButton
-        //         text="upload"
-        //         color={myColor.secondary}
-        //         funOnPress={() => openImagePickerAsync()}
-        //     />
-
-        //     <TextBox 
-        //         text="first name"
-        //         setTextInput={{
-        //             value: profile.fristName,
-        //             onChangeText: (text) => changeProfile("fristName", text),
-        //         }}
-        //     />
-        //     <TextBox 
-        //         text="last name"
-        //         setTextInput={{
-        //             value: profile.lastName,
-        //             onChangeText: (text) => changeProfile("lastName", text),
-        //         }}
-        //     />
-
-        //     <CreateButton
-        //         text="Save"
-        //         color={myColor.success}
-        //         styles={{width:100}}
-        //         funOnPress={() => onEditProfile()}
-        //     />
-            
-        //     <CreateButton
-        //         text="Cancel"
-        //         color={myColor.error}
-        //         styles={{width:100}}
-        //         funOnPress={() => navigation.navigate({
-        //             name: 'Profile',
-        //         })}
-        //     />
-        // </View>
     )
 }

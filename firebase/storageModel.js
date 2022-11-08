@@ -31,7 +31,7 @@ export const uploadPostImage = async (imgsUri, docIdPost, success, unsuccess) =>
     let images = [];
     if (imgsUri.length > 0) {
         imgsUri.map( async (imgUri, index) => {
-            console.log(imgUri);
+            //console.log(imgUri);
             const resposns = await fetch(imgUri.url)
             const blob = await resposns.blob();
             const metadata = {
@@ -80,3 +80,33 @@ export const uploadPostImage = async (imgsUri, docIdPost, success, unsuccess) =>
     // }) 
 }
 
+export const uploadPdfImage = async (pdfUri, docIdPost,images, success, unsuccess) => {
+    console.log(pdfUri);
+    console.log(docIdPost);
+    if(pdfUri.url !== undefined && pdfUri.name !== undefined){
+        const resposns = await fetch(pdfUri.url)
+        const blob = await resposns.blob();
+        //const filename = pdfUri.substring((imgUri.lastIndexOf('/')+1))
+        console.log("OK");
+        const metadata = {
+            contentType: "application/pdf",
+        };
+        await storage.ref().child(`media/${docIdPost}/` + `${pdfUri.name}`).put(blob, metadata)
+        .then(()=>{
+            storage.ref().child(`media/${docIdPost}/` + `${pdfUri.name}`).getDownloadURL()
+            .then((url) => {
+                success(images,url,docIdPost)
+            })
+            .catch((error) => {
+                unsuccess(error)
+            });
+        })
+        .catch((err)=>{
+            unsuccess(err)
+        }) 
+    }else{
+        console.log("NO PDF");
+        success(images,"",docIdPost)
+    }
+    //success(pdfUri,docIdPost)
+}

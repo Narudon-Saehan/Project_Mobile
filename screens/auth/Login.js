@@ -41,14 +41,10 @@ export const Login = ({ navigation }) => {
         })
     }
     const unsuccess = (msg) => {
-        //console.log(msg);
         setLoading(false)
         AlertMessage(msg)
     }
     const success = (doc) => {
-        //console.log(msg);
-        //AlertMessage(msg)
-        console.log(doc.id);
         dispatch(updateTodo({docIdUser:doc.id}))
         setLoading(false)
         navigation.navigate({
@@ -57,12 +53,6 @@ export const Login = ({ navigation }) => {
     }
     const LoginSuccess = (msg) => {
         UserModel.getUserByEamil2(email,success,unsuccess)
-        //console.log(msg);
-        //AlertMessage(msg)
-        //setLoading(false)
-        // navigation.navigate({
-        //     name: 'MainNav',
-        // })
     }
     const onLogin = () => {
         setLoading(true)
@@ -101,6 +91,7 @@ export const Login = ({ navigation }) => {
                             text="Password"
                             setTextInput={{
                                 value: password,
+                                secureTextEntry:true,
                                 onChangeText: (text) => setPassword(text),
                             }}
                         />
