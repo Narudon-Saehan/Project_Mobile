@@ -29,15 +29,6 @@ import { useSelector } from 'react-redux'
 
 import * as OpenAnything from "react-native-openanything";
 
-const tmpData = [
-  {
-    id: 0,
-    title: "Test",
-    img: "https://img.freepik.com/free-photo/wide-angle-shot-single-tree-growing-clouded-sky-during-sunset-surrounded-by-grass_181624-22807.jpg?w=2000",
-    creator: "Narudon Saehan",
-    like: 10,
-  },
-];
 
 export const Details = ({ route, navigation }) => {
   const { postId } = route.params;

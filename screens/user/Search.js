@@ -11,7 +11,7 @@ import * as UserModel from "../../firebase/userModel"
 
 import { Card } from "../../component/card"
 import { Loading } from "../Loading"
-export const Search=()=>{
+export const Search=({navigation})=>{
     const docIdUserLogin = useSelector((state) => state.todos.docIdUser)
     const [search,setSearch] = useState("")
     const [posts,setPosts] = useState({data:[]})
@@ -136,12 +136,12 @@ export const Search=()=>{
             <Text>HHH</Text><Text>HHH</Text><Text>HHH</Text><Text>HHH</Text><Text>HHH</Text>
             </View> */}
             <View style={{flex:1,width:"100%"}}>
-            <FlatList
-                data={posts.data}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                >
-            </FlatList>
+                <FlatList
+                    data={posts.data}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id}
+                    >
+                </FlatList>
             </View>
         </View>
     )
