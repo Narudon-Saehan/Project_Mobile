@@ -94,15 +94,15 @@ export const updateUserById = (id,profile,success,unsuccess) =>{
     })
 }
 
-export const updateFollowing = (docIdUser,docIdOtherUser,follUnfoll,success,unsuccess) =>{
+export const updateFollowing = (docIdfollower,docIdUser,follUnfoll,success,unsuccess) =>{
     let following
     if(follUnfoll){
-        following=firebase.firestore.FieldValue.arrayUnion(DB.doc("users/"+docIdOtherUser))
+        following=firebase.firestore.FieldValue.arrayUnion(DB.doc("users/"+docIdUser))
     }else{
-        following=firebase.firestore.FieldValue.arrayRemove(DB.doc("users/"+docIdOtherUser))
+        following=firebase.firestore.FieldValue.arrayRemove(DB.doc("users/"+docIdUser))
     }
     
-    userColl.doc(docIdUser)
+    userColl.doc(docIdfollower)
     .update({
         following: following
     })

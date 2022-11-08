@@ -33,29 +33,20 @@ export const Card = (props,{navigation}) => {
                             />
                         </TouchableOpacity>
                         <View style={{flex:1}}>
-                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                <Text>{props.title}</Text>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between",alignItems:"flex-end" }}>
+                                <View style={{flex:5}}>
+                                    <Text>{props.title.substring(0,50)}{props.title.length>40?"...":""} </Text>
+                                    <Text>by:{props.creator}</Text>
+                                </View>
 
-                                {props.onLike?<TouchableOpacity
-                                    onPress={()=>props.onLike(props.docIdPost,props.docIdUser,!props.userLike)}
-                                >
+                                <View style={{flex:1,justifyContent:"flex-end",alignItems:"center"}}>
                                     {props.userLike?
-                                        <FontAwesome name="heart" size={24} color={myColor.error} style={{marginRight:5}}/>
-                                    :
-                                        <Feather name="heart" size={24} color="black" style={{marginRight:5}} />
+                                        <FontAwesome name="heart" size={24} color={myColor.error} />
+                                        :
+                                        <Feather name="heart" size={24} color="black" />
                                     }
-                                </TouchableOpacity>
-                                :
-                                    props.userLike?
-                                        <FontAwesome name="heart" size={24} color={myColor.error} style={{marginRight:5}}/>
-                                    :
-                                        <Feather name="heart" size={24} color="black" style={{marginRight:5}} />
-                                }
-
-                            </View>
-                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                <Text>by:{props.creator}</Text>
-                                <Text>like:{props.like}</Text>
+                                    <Text>like:{props.like}</Text>
+                                </View>
                             </View>
                         </View>
                     </View>

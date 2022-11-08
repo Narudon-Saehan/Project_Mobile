@@ -46,9 +46,6 @@ export const Home = ({ navigation }) => {
                     creatorId={creator.docId}
                     imgCreator={creator.profileImg } 
                     like={item.likeFromId.length} 
-                    onLike={onLike}
-                    docIdUser={profile.id}
-                    docIdPost={item.id}
                     userLike={checkUserLike}
                     toCreatorProfile={toCreatorProfile}
                 />
@@ -70,22 +67,6 @@ export const Home = ({ navigation }) => {
         console.log(msg);
     }
     const success= (dataPost)=>{
-
-        //console.log(dataPost);
-        let creator
-        //setLoading(false)
-        // dataPost.map((data)=>{
-        //     console.log( data.creator);
-        //     console.log( data.creator.user);
-        // })
-        // let newPost = post;
-        //  (dataPost.map(async(data,index)=>{
-        //     creator = await data.creator.get()
-        //     //newPost = post;
-        //     console.log(creator.data());
-        //     //newPost[index].creator = creator.data()
-        //     //setPost(newPost)
-        // }))
         let newPost =  dataPost;
         let newProfileCreator = profileCreator.data;
         let checkNewCreator = false;
@@ -96,32 +77,12 @@ export const Home = ({ navigation }) => {
                 likeFromId.push(item._delegate._key.path.segments[6])
             })
             newPost[index].likeFromId = likeFromId
-            //console.log(likeFromId);
-            //console.log(data.creator._delegate._key.path.segments[6]);
             if (newProfileCreator.find((item)=>item.docId === data.creator._delegate._key.path.segments[6]) === undefined){
                 checkNewCreator = true;
                 newProfileCreator.push({docId:data.creator._delegate._key.path.segments[6],fristName:"",lastName:"",profileImg:"#",get:false})
-                //UserModel.getCreatorByDocID(data.creator._delegate._key.path.segments[6],getCreatorSuccess,unsuccess)
             }
-            //     //console.log(data._delegate._key.path.segments[6]);
-            //     likedPosts.push(data._delegate._key.path.segments[6])
-            // })
-            // creator = await data.creator.get()
-            // .then((doc)=>{
-            //     newPost[index] = {...newPost[index],creator:doc.data()}
-            //     setPost({data:newPost})
-            // })
-            //     ((data)=>{
-            //     //console.log(data.data());
-            //     delete data.data().likedPosts;
-            //     newPost[index] = {...newPost[index],creator:data.data()}
-            //     setPost({data:newPost})
-            // })
-            // newPost[index] = {...newPost[index],creator:creator.data()}
-            // setPost({data:newPost})
-            //console.log(data.creator);
         })
-        //console.log("newPost",newPost);
+
         setPost({data:newPost})
         if(checkNewCreator) {
             setProfileCreator({data:newProfileCreator})

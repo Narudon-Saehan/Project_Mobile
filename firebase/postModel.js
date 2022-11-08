@@ -100,7 +100,7 @@ export const getAllPostByCreator =(creatorId,success,unsuccess)=>{
             //console.log("querySnapshot",doc.data());
             post = doc.data()
             delete post.creator;
-            posts.push(post)
+            posts.push({...post,id:doc.id})
         });
         success(posts)
         // posts.map(async(data,index)=>{
@@ -138,7 +138,7 @@ export const updateLikeFromIdPost= (docIdPost,docIdUser,likeAndUnlike,success,un
         likeFromId: updatelike
     })
     .then(()=>{
-        success("OK")
+        success(likeAndUnlike)
     })
     .catch((err)=>{
         unsuccess(err)

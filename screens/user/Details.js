@@ -22,6 +22,8 @@ import { Loading } from "../Loading";
 import { myFont } from "../../component/myFont";
 import { TextBox, CreateButton, ShowText } from "../../component/forms";
 import { Card } from "../../component/card";
+
+import { useSelector } from 'react-redux'
 const tmpData = [
   {
     id: 0,
@@ -35,6 +37,7 @@ const tmpData = [
 export const Details = ({ route, navigation }) => {
   const { postId } = route.params;
   const windowWidth = Dimensions.get("window").width;
+  const docIdUserLogin = useSelector((state) => state.todos.docIdUser)
   const [creator, setCreator] = useState();
   const [post, setPost] = useState();
   const [profile, setProfile] = useState();
@@ -70,48 +73,21 @@ export const Details = ({ route, navigation }) => {
     setPost({ ...tempPost, id: doc.id });
     setLoading(false);
   };
-
-  const renderItem = (item, index) => {
-    return (
-      <View
-        key={index}
-        style={{
-          width: "100%",
-          marginBottom: 10,
-          marginTop: index === 0 ? 10 : 0,
-        }}
-      >
-        <View
-          style={{
-            marginLeft: 20,
-            marginRight: 20,
-            backgroundColor: myColor.neutral,
-            borderRadius: 20,
-          }}
-        >
-          <Image
-            style={{
-              width: "100%",
-              height: 150,
-              resizeMode: "cover",
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-            }}
-            source={{ uri: item.img }}
-          ></Image>
-          <View style={{ paddingLeft: 20, paddingRight: 20 }}>
-            <Text>{item.title}</Text>
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <Text>by:{item.creator}</Text>
-              <Text>like:{item.like}</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    );
+  const likeSuccess = (checkLikePost)=> {
+    let newLikeFromId = post.likeFromId
+    if(checkLikePost)
+      newLikeFromId.push(docIdUserLogin)
+    else
+      newLikeFromId = newLikeFromId.filter((data)=>data!==docIdUserLogin)
+    //newPost.title = "test"
+    //console.log(newPost);
+    setPost({...post,likeFromId:newLikeFromId})
   };
+  const onLike=()=>{
+    //UserModel.updateLikedPosts(docIdUser,docIdPost,likeAndUnlike,unsuccess,unsuccess)
+    const checkLikePost = post.likeFromId.find((data)=>data === docIdUserLogin)!==undefined
+    PostModel.updateLikeFromIdPost(postId,docIdUserLogin,!checkLikePost,likeSuccess,unsuccess)
+  }
   const renderImage = ({ item, index }) => {
     return (
       <View style={{ flex: 1, marginRight: 10 ,marginVertical:10}}>
@@ -157,7 +133,6 @@ export const Details = ({ route, navigation }) => {
       params: docIdUser,
     });
   };
-  console.log("windowWidth", windowWidth);
   useEffect(() => {
     PostModel.getPostById(postId, success, unsuccess);
     const emailCurrentUser = AuthModel.getCurrentUser().email;
@@ -198,7 +173,7 @@ export const Details = ({ route, navigation }) => {
             docIdUser={profile.id}
             docIdPost={post.id}
             userLike={
-              post.likeFromId.find((data) => data === profile.id) !== undefined
+              post.likeFromId.find((data) => data === docIdUserLogin) !== undefined
             }
             toCreatorProfile={toCreatorProfile}
           />
@@ -216,6 +191,8 @@ export const Details = ({ route, navigation }) => {
                     color={myColor.like}
                     pStyle={myFont.h8}
                     textStyles={{fontWeight:'bold'}}
+                    funOnPress={()=>onLike()}
+                    //onLike
                 />
             </View>
            </View>

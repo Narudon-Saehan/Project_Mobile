@@ -19,6 +19,7 @@ export const TextBox = (props) => {
                     marginBottom:2,
                     backgroundColor:myColor.neutral,
                     borderColor:(props.required && !props.setTextInput.value)?myColor.error:"black",
+                    ...props.TStyles,
                 }}
                 {...props.setTextInput}
             />
@@ -43,7 +44,7 @@ export const CreateButton = (props) => {
             >
                 <Text
                     style={[props.pStyle,{
-                        ...props.textStyles
+                        ...props.textStyles,
                     }]}
                 >{props.text}</Text>
             </TouchableOpacity>

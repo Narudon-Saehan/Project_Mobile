@@ -15,6 +15,7 @@ export const Profile = ({ navigation,route }) => {
     const docIdUserLogin = useSelector((state) => state.todos.docIdUser)
     const [profile, setProfile] = useState()
     const [checkFollower, setCheckFollower] = useState(false)
+    const [likeAll, setLikeAll] = useState(0)
     const [loading, setLoading] = useState(true)
     const [loading2, setLoading2] = useState(false)
     const [post, setPost] = useState([])
@@ -26,27 +27,54 @@ export const Profile = ({ navigation,route }) => {
     }
     const getPostSuccess = (posts) => {
         //console.log(posts);
-        setPost(posts);
+        let templikeAll = 0
+        let newPost =  posts;
+        posts.map((data,index)=>{
+            let likeFromId =[]
+            data.likeFromId.map((item)=>{
+                likeFromId.push(item._delegate._key.path.segments[6])
+            })
+            templikeAll += likeFromId.length
+            newPost[index].likeFromId = likeFromId
+        })
+        setLikeAll(templikeAll)
+        setPost(newPost);
     }
-    const getProfileUserLoginSuccess = (doc) => {
+    // const getProfileUserLoginSuccess = (doc) => {
+    //     let tempFollowing = []
+    //     doc.data().following.map((data)=>{
+    //         tempFollowing.push(data._delegate._key.path.segments[6])
+    //     })
+    //     if(tempFollowing.find((data)=>data === route.params)!== undefined)
+    //         setCheckFollower(true)
+    //     else
+    //         setCheckFollower(false)
+    //     //console.log("getProfileUserLoginSuccess");
+    //     //setCheckFollower({...doc.data(),docId:doc.id})
+    //     setLoading2(false)
+    // }
+    const success = (doc) => {
+        //console.log("success",doc.id);
         let tempFollowing = []
         doc.data().following.map((data)=>{
             tempFollowing.push(data._delegate._key.path.segments[6])
         })
-        if(tempFollowing.find((data)=>data === route.params)!== undefined)
+        if(tempFollowing.find((data)=>data === docIdUserLogin)!== undefined)
             setCheckFollower(true)
         else
             setCheckFollower(false)
-        //console.log("getProfileUserLoginSuccess");
-        //setCheckFollower({...doc.data(),docId:doc.id})
-        setLoading2(false)
-    }
-    const success = (doc) => {
-        //console.log("success",doc.id);
-        setProfile({...doc.data(),docId:doc.id})
         PostModel.getAllPostByCreator(doc.id, getPostSuccess, unsuccess)
+        setProfile({...doc.data(),docId:doc.id})
         setLoading(false)
     }
+    const toCreatorProfile=(docIdUser)=>{
+        //console.log(docIdUser);
+        navigation.navigate({
+            name:"CreatorProfile",
+            params:docIdUser
+        })
+    }
+
     const signoutSuccess = () => {
         navigation.navigate('Login')
     }
@@ -56,7 +84,7 @@ export const Profile = ({ navigation,route }) => {
         AuthModel.signOut(signoutSuccess, unsuccess)
     }
     const onFollowingPress = () => {
-        UserModel.updateFollowing(docIdUserLogin,profile.docId,!checkFollower,unsuccess,unsuccess)
+        UserModel.updateFollowing(profile.docId,docIdUserLogin,!checkFollower,unsuccess,unsuccess)
         //AuthModel.signOut(signoutSuccess, unsuccess)
     }
 
@@ -66,15 +94,26 @@ export const Profile = ({ navigation,route }) => {
             {post.length!=0?
                 post.map((data, index) => {
                     return (
-                        <Card
+                        <TouchableOpacity
                             key={index}
-                            img={data.images.length === 0 ? "" : data.images[0]}
-                            mainStyle={{marginTop:7,marginBottom:1}}
-                            title={data.title}
-                            creator={profile.fristName + " " + profile.lastName}
-                            imgCreator={profile.profileImg}
-                            like={data.like}
-                        />
+                            onPress={()=>navigation.navigate({
+                                name:"Details",
+                                params:{postId:data.id},
+                            })} 
+                        >
+                            <Card
+                                key={index}
+                                img={data.images.length === 0 ? "" : data.images[0]}
+                                mainStyle={{marginTop:7,marginBottom:1}}
+                                title={data.title}
+                                creator={profile.fristName + " " + profile.lastName}
+                                creatorId={profile.docId}
+                                imgCreator={profile.profileImg}
+                                like={data.likeFromId.length}
+                                userLike={data.likeFromId.find((data)=>data === docIdUserLogin)!==undefined}
+                                toCreatorProfile={toCreatorProfile}
+                            />
+                        </TouchableOpacity>
                     )
                 })
             :
@@ -125,40 +164,13 @@ export const Profile = ({ navigation,route }) => {
             )
         }
     }
-    const renderItem = (item, index) => {
-        return (
-            // <Card 
-            //     key={index} 
-            //     img={item.images.length===0?"":item.images[0]}  
-            //     title={item.title}  
-            //     creator={item.creator.fristName + " " +item.creator.lastName}
-            //     imgCreator={item.creator.profileImg } 
-            //     like={item.like} 
-            // />
-            <View key={index} style={{ width: "100%", marginBottom: 10, marginTop: (index === 0) ? 10 : 0 }}>
-                <View style={{ marginLeft: 20, marginRight: 20, backgroundColor: myColor.neutral, borderRadius: 20 }}>
-                    <Image
-                        style={{ width: "100%", height: 150, resizeMode: 'cover', borderTopLeftRadius: 20, borderTopRightRadius: 20 }}
-                        source={{ uri: item.img }}
-                    ></Image>
-                    <View style={{ paddingLeft: 20, paddingRight: 20 }}>
-                        <Text>{item.title}</Text>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                            <Text>by:{item.creator}</Text>
-                            <Text>like:{item.like}</Text>
-                        </View>
-                    </View>
-                </View>
-            </View>
-        )
-    }
 
     useEffect(() => {
         //console.log(route);
         if(routeName === "CreatorProfile"){
-            setLoading2(true)
+            //setLoading2(true)
             UserModel.getUserByDocID(route.params,success,unsuccess)
-            UserModel.getUserByDocID(docIdUserLogin,getProfileUserLoginSuccess,unsuccess)
+            //UserModel.getUserByDocID(docIdUserLogin,getProfileUserLoginSuccess,unsuccess)
         }else{
             let emailCurrentUser = AuthModel.getCurrentUser().email
             UserModel.getUserByEamil(emailCurrentUser, success, unsuccess)
@@ -230,7 +242,7 @@ export const Profile = ({ navigation,route }) => {
                                 </TouchableOpacity>
                                 </>
                                 :
-                                <>
+                                route.params !==docIdUserLogin?
                                 <TouchableOpacity style={{
                                     width: 100,
                                     height: 30,
@@ -243,7 +255,9 @@ export const Profile = ({ navigation,route }) => {
                                 >
                                     <Text style={[myFont.h9, { fontWeight: "bold", color: myColor.neutral }]}>{checkFollower?"UnFollower":"Follower"}</Text>
                                 </TouchableOpacity>
-                                </>
+                                :
+                                <></>
+
                             }
 
                         </View>
@@ -259,7 +273,7 @@ export const Profile = ({ navigation,route }) => {
                             </Text>
                             <View style={{ flexDirection: "row" }}>
                                 <Text style={[myFont.h8, { paddingRight: 10 }]}>
-                                    100
+                                    {likeAll}
                                 </Text>
                                 <Feather name="heart" size={24} color="black" />
                             </View>
